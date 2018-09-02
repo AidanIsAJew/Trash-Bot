@@ -22,10 +22,10 @@ let year = currentDate.getFullYear();
 let hour = currentDate.getHours();
 let minute = currentDate.getMinutes();
 let seconds = currentDate.getSeconds();
-let time  = (month+1) + "/" + date + "/" + year + " " + hour + ":" + minute + ":" + seconds + " : ";
+let time = (month + 1) + "/" + date + "/" + year + " " + hour + ":" + minute + ":" + seconds + " : ";
 
 client.on("ready", () => {
-  console.log(time + `Logged in as ${client.user.tag}\n`);
+    console.log(time + `Logged in as ${client.user.tag}\n`);
 });
 
 
@@ -37,47 +37,47 @@ fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
 
 // Create an event listener for messages
 client.on("message", (message) => {
-  //exit if no prefix
-  if (!message.content.startsWith(config.prefix) || message.author.bot) return;
+    //exit if no prefix
+    if (!message.content.startsWith(config.prefix) || message.author.bot) return;
 
-  // If the message is "ping"
-  if (message.content.startsWith(config.prefix + 'ping')) {
-    // Send "pong" to the same person
-    message.reply('pong!');
-  } else
-    // If the message is "gay"
-    if (message.content.startsWith(config.prefix + 'gay')) {
-    // Send "no u" to the same person
-    message.reply('no u');
-    console.log(`I was sexually assualted today!`);
-  } else
-  // Does something
-  if(message.content.startsWith(config.prefix + 'prefix')) {
-  // Gets the prefix from the command (eg. "!prefix +" it will take the "+" from it)
-  let newPrefix = message.content.split(" ").slice(1, 2)[0];
-  if (newPrefix === undefined) {
-    message.reply('Please enter a prefix.');
-    return;
-  }
-  // change the configuration in memory
-  console.log(`\nCurrent Prefix: ` + config.prefix + `\nNew Prefix: ` + newPrefix);
-  let oldprefix = config.prefix;
-  config.prefix = newPrefix;
+    // If the message is "ping"
+    if (message.content.startsWith(config.prefix + 'ping')) {
+        // Send "pong" to the same person
+        message.reply('pong!');
+    } else
+        // If the message is "gay"
+        if (message.content.startsWith(config.prefix + 'gay')) {
+            // Send "no u" to the same person
+            message.reply('no u');
+            console.log(`I was sexually assualted today!`);
+        } else
+            // Does something
+            if (message.content.startsWith(config.prefix + 'prefix')) {
+                // Gets the prefix from the command (eg. "!prefix +" it will take the "+" from it)
+                let newPrefix = message.content.split(" ").slice(1, 2)[0];
+                if (newPrefix === undefined) {
+                    message.reply('Please enter a prefix.');
+                    return;
+                }
+                // change the configuration in memory
+                console.log(`\nCurrent Prefix: ` + config.prefix + `\nNew Prefix: ` + newPrefix);
+                let oldprefix = config.prefix;
+                config.prefix = newPrefix;
 
-  // Now we have to save the file.
-  fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
+                // Now we have to save the file.
+                fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
 
-  // Setup the embeded message
-  let prefixreply = new Discord.RichEmbed()
-  // Set the title of the field
-  .setTitle('Prefix Change')
-  // Set the color of the embed
-  .setColor(0xFF0000)
-  // Set the main content of the embed
-  .setDescription('\nOld prefix: ' + oldprefix + '\nNew prefix: ' + config.prefix);
-  // Send the embed to the same channel as the message
-  message.channel.send(prefixreply);
-  }
+                // Setup the embeded message
+                let prefixreply = new Discord.RichEmbed()
+                    // Set the title of the field
+                    .setTitle('Prefix Change')
+                    // Set the color of the embed
+                    .setColor(0xFF0000)
+                    // Set the main content of the embed
+                    .setDescription('\nOld prefix: ' + oldprefix + '\nNew prefix: ' + config.prefix);
+                // Send the embed to the same channel as the message
+                message.channel.send(prefixreply);
+            }
 });
 
 
