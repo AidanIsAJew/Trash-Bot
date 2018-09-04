@@ -5,82 +5,48 @@ const client = new Discord.Client();
 // I dont remeber what this does \_O-O_/
 const fs = require("fs")
 // Config
-const config = require("./config.json");
+const config = require("./settings/config.json");
 // Defualt prefix
 const defPrefix = "!";
+// Time
+const time = require("./func/time.js");
+// Command handler
+const TrashBot = require("./handler/TrashBot.js");
 
-
-
-/**
- * The ready event is vital, it means that only after this will your bot start reacting to information
- * received from Discord
- */
-let currentDate = new Date();
-let date = currentDate.getDate();
-let month = currentDate.getMonth();
-let year = currentDate.getFullYear();
-let hour = currentDate.getHours();
-let minute = currentDate.getMinutes();
-let seconds = currentDate.getSeconds();
-let time = (month + 1) + "/" + date + "/" + year + " " + hour + ":" + minute + ":" + seconds + " : ";
 
 client.on("ready", () => {
-    console.log(time + `Logged in as ${client.user.tag}\n`);
+    console.log(time.run() + `Logged in as ${client.user.tag}\n` + `Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.\n\n`);
+    //Sets the game
+    client.user.setActivity(`Faithfuly serving the TRASH server since 9/4/18!`);
 });
 
+// Bot is joins a guild.
+client.on("guildCreate", guild => {
+    console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
+});
 
-// Sets defualt prefix
+// Bot is removed from a guild.
+client.on("guildDelete", guild => {
+    console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
+});
+
+// Error Handler
+client.on('error', console.error);
+
+// Sets and writes defualt prefix
 config.prefix = defPrefix;
 fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
 
 
-
 // Create an event listener for messages
-client.on("message", (message) => {
+client.on("message", async message => {
     //exit if no prefix
     if (!message.content.startsWith(config.prefix) || message.author.bot) return;
-
-    // If the message is "ping"
-    if (message.content.startsWith(config.prefix + 'ping')) {
-        // Send "pong" to the same person
-        message.reply('pong!');
-    } else
-        // If the message is "gay"
-        if (message.content.startsWith(config.prefix + 'gay')) {
-            // Send "no u" to the same person
-            message.reply('no u');
-            console.log(`I was sexually assualted today!`);
-        } else
-            // Does something
-            if (message.content.startsWith(config.prefix + 'prefix')) {
-                // Gets the prefix from the command (eg. "!prefix +" it will take the "+" from it)
-                let newPrefix = message.content.split(" ").slice(1, 2)[0];
-                if (newPrefix === undefined) {
-                    message.reply('Please enter a prefix.');
-                    return;
-                }
-                // change the configuration in memory
-                console.log(`\nCurrent Prefix: ` + config.prefix + `\nNew Prefix: ` + newPrefix);
-                let oldprefix = config.prefix;
-                config.prefix = newPrefix;
-
-                // Now we have to save the file.
-                fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
-
-                // Setup the embeded message
-                let prefixreply = new Discord.RichEmbed()
-                    // Set the title of the field
-                    .setTitle('Prefix Change')
-                    // Set the color of the embed
-                    .setColor(0xFF0000)
-                    // Set the main content of the embed
-                    .setDescription('\nOld prefix: ' + oldprefix + '\nNew prefix: ' + config.prefix);
-                // Send the embed to the same channel as the message
-                message.channel.send(prefixreply);
-            }
+    //run the command handler
+    TrashBot.run(message);
 });
 
 
 
-// Log our bot in using the token from https://discordapp.com/developers/applications/me
+// Log bot in using the token from https://discordapp.com/developers/applications/me
 client.login(config.token);
