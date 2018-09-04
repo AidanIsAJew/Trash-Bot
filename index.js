@@ -31,7 +31,7 @@ client.on("guildDelete", guild => {
 });
 
 // Error Handler
-client.on('error', console.error);
+client.on("error", console.error);
 
 // Sets and writes defualt prefix
 config.prefix = defPrefix;

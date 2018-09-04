@@ -11,9 +11,10 @@ const defPrefix = "!";
 
 module.exports = {
     run: async (message, command, args) => {
-        // Send "pong" to the same person
-        const m = await message.channel.send("Ping?");
-        // Edit the message and measure the time from the orginal message sent and the edit
-        m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms.`);
+        const sayMessage = args.join(" ");
+        // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.
+        message.delete().catch(O_o => {});
+        // And we get the bot to say the thing:
+        message.channel.send(sayMessage);
     }
 }
