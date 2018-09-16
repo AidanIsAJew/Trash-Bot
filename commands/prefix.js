@@ -32,12 +32,12 @@ module.exports = {
             // Set the title of the field
             .setTitle('Prefix Change')
             // Set the color of the embed
-            .setColor(0xFF0000)
+            .setColor(0x4286f4)
             // Set the main content of the embed
             .setDescription('\nOld prefix: ' + oldprefix + '\nNew prefix: ' + config.prefix);
         // Send the embed to the same channel as the message
 
-        const logs = message.guild.channels.find('name', 'logs');
+        const logs = message.guild.channels.find(x => x.name === 'logs');
         if (!logs) {
             message.channel.send(prefixreply);
         }
