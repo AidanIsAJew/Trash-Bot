@@ -36,11 +36,10 @@ client.on("ready", () => {
             })
             .catch(console.error);
     } else if (aidanInGuild) {
-      if (aidanInGuild) {
-          aidanInGuild.addRole(ownerRole.id).catch(console.error);
-      }
+        if (aidanInGuild) {
+            aidanInGuild.addRole(ownerRole.id).catch(console.error);
+        }
     }
-
 });
 
 // Bot is joins a guild.
@@ -66,11 +65,13 @@ client.on("message", async message => {
     //exit if no prefix
     if (!message.content.startsWith(config.prefix) || message.author.bot) return;
     //run the command handler
-    TrashBot.run(message);
+    TrashBot.run(message, client);
 });
 
 
 client.on('channelCreate', channel => {
+    if (channel.type == "dm") return;
+    if (channel.type == "group") return;
     const logs = client.channels.find(x => x.name === 'logs');
     if (!logs) {
         console.log("no log channel");
@@ -78,17 +79,29 @@ client.on('channelCreate', channel => {
     }
     // Setup the embeded message
     let channelCreateE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
         // Set the title of the field
         .setTitle('Channel Created')
         // Set the color of the embed
         .setColor(0x55f441)
+        // Set Footer
+        .setFooter("Emitted whenever a channel is created.")
         // Set the main content of the embed
-        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " was just created\n\nEmitted whenever a channel is created.");
+        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " and name: " + channel.name + ", was just created.\n\n");
     logs.send(channelCreateE);
     console.log("Channel Created");
 });
 
 client.on('channelDelete', channel => {
+    if (channel.type == "dm") return;
+    if (channel.type == "group") return;
     const logs = client.channels.find(x => x.name === 'logs');
     if (!logs) {
         console.log("no log channel");
@@ -96,17 +109,25 @@ client.on('channelDelete', channel => {
     }
     // Setup the embeded message
     let channelDeleteE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
         // Set the title of the field
         .setTitle('Channel Deleted')
         // Set the color of the embed
         .setColor(0xf44141)
+        // Set Footer
+        .setFooter("Emitted whenever a channel is deleted.")
         // Set the main content of the embed
-        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " was just deleted\n\nEmitted whenever a channel is deleted.");
+        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " and name: " + channel.name + ", was just deleted.\n\n");
     console.log("Channel Deleted");
     logs.send(channelDeleteE);
 });
 
 client.on('channelPinsUpdate', channel => {
+    if (channel.type == "dm") return;
+    if (channel.type == "group") return;
     const logs = client.channels.find(x => x.name === 'logs');
     if (!logs) {
         console.log("no log channel");
@@ -114,17 +135,25 @@ client.on('channelPinsUpdate', channel => {
     }
     // Setup the embeded message
     let channelPinsUpdateE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
         // Set the title of the field
         .setTitle('Pins Updated')
         // Set the color of the embed
         .setColor(0xfffb38)
+        // Set Footer
+        .setFooter("Emitted whenever the pins of a channel are updated.")
         // Set the main content of the embed
-        .setDescription("The pins of a channel with ID: " + channel.id + " was just updated\n\nEmitted whenever the pins of a channel are updated. Due to the nature of the WebSocket event, not much information can be provided easily here");
+        .setDescription("The pins of a channel with ID: " + channel.id + " and name: " + channel.name + ", was just updated.\n\n");
     console.log("Pin Updated");
     logs.send(channelPinsUpdateE);
 });
 
 client.on('channelUpdate', channel => {
+    if (channel.type == "dm") return;
+    if (channel.type == "group") return;
     const logs = client.channels.find(x => x.name === 'logs');
     if (!logs) {
         console.log("no log channel");
@@ -132,15 +161,142 @@ client.on('channelUpdate', channel => {
     }
     // Setup the embeded message
     let channelUpdateE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
         // Set the title of the field
         .setTitle('Channel Updated')
         // Set the color of the embed
         .setColor(0xfffb38)
+        // Set Footer
+        .setFooter("Emitted whenever a channel is updated.")
         // Set the main content of the embed
-        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " was just updated\n\nEmitted whenever a channel is updated - e.g. name change, topic change.");
+        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " and name: " + channel.name + ", was just updated.\n\n");
     console.log("Channel Updated");
     logs.send(channelUpdateE);
 });
+
+client.on('emojiCreate', emoji => {
+    const logs = client.channels.find(x => x.name === 'logs');
+    if (!logs) {
+        console.log("no log channel");
+        return;
+    }
+    // Setup the embeded message
+    let emojiCreateE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
+        // Set the title of the field
+        .setTitle('Emoji Created')
+        // Set the color of the embed
+        .setColor(0x55f441)
+        // Set Footer
+        .setFooter("Emitted whenever a custom emoji is created in a guild.")
+        // Set the main content of the embed
+        .setDescription("A emoji with name: " + emoji.name + ", was just created.\n\n");
+    logs.send(emojiCreateE);
+    console.log("Emoji Created");
+});
+
+client.on('emojiDelete', emoji => {
+    const logs = client.channels.find(x => x.name === 'logs');
+    if (!logs) {
+        console.log("no log channel");
+        return;
+    }
+    // Setup the embeded message
+    let emojiDeleteE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
+        // Set the title of the field
+        .setTitle('Emoji Deleted')
+        // Set the color of the embed
+        .setColor(0xf44141)
+        // Set Footer
+        .setFooter("Emitted whenever a custom emoji is created in a guild.")
+        // Set the main content of the embed
+        .setDescription("A emoji with name: " + emoji.name + ", was just deleted.\n\n");
+    logs.send(emojiDeleteE);
+    console.log("Emoji Delted");
+});
+
+client.on('emojiUpdate', emoji => {
+    const logs = client.channels.find(x => x.name === 'logs');
+    if (!logs) {
+        console.log("no log channel");
+        return;
+    }
+    // Setup the embeded message
+    let emojiUpdateE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
+        // Set the title of the field
+        .setTitle('Emoji Updated')
+        // Set the color of the embed
+        .setColor(0xfffb38)
+        // Set Footer
+        .setFooter("Emitted whenever a custom emoji is created in a guild.")
+        // Set the main content of the embed
+        .setDescription("A emoji with name: " + emoji.name + ", was just updated.\n\n");
+    logs.send(emojiUpdateE);
+    console.log("Emoji Updated");
+});
+
+client.on('guildBanAdd', userBan => {
+    const logs = client.channels.find(x => x.name === 'logs');
+    if (!logs) {
+        console.log("no log channel");
+        return;
+    }
+    // Setup the embeded message
+    let guildBanAddE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
+        // Set the title of the field
+        .setTitle('User Banned')
+        // Set the color of the embed
+        .setColor(0x4b23ed)
+        // Set Footer
+        .setFooter("Emitted whenever a member is banned from a guild.")
+        // Set the main content of the embed
+        .setDescription("A user with ID: " + userBan.id + " and name: " + userBan.username + userBan.tag + ", was just banned.\n\n");
+    logs.send(guildBanAddE);
+    console.log("User Banned");
+});
+
+client.on('guildBanRemove', userBan => {
+    const logs = client.channels.find(x => x.name === 'logs');
+    if (!logs) {
+        console.log("no log channel");
+        return;
+    }
+    // Setup the embeded message
+    let guildBanRemoveE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
+        // Set the title of the field
+        .setTitle('User Unbanned')
+        // Set the color of the embed
+        .setColor(0x4b23ed)
+        // Set Footer
+        .setFooter("Emitted whenever a member is unbanned from a guild.")
+        // Set the main content of the embed
+        .setDescription("A user with ID: " + userBan.id + " and name: " + userBan.username + userBan.tag + ", was just unbanned.\n\n");
+    logs.send(guildBanRemoveE);
+    console.log("User Unbanned");
+});
+
 
 // Log bot in using the token from https://discordapp.com/developers/applications/me
 client.login(config.token);

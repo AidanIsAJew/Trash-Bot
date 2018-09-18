@@ -1,6 +1,4 @@
 const Discord = require("discord.js");
-// Create an instance of a Discord client
-const client = new Discord.Client();
 // I dont remeber what this does \_O-O_/
 const fs = require("fs")
 // Config
@@ -13,10 +11,14 @@ const commandPrefix = require("../commands/prefix.js");
 const commandSay = require("../commands/say.js");
 const commandGay = require("../commands/gay.js");
 const commandAudit = require("../commands/audit.js");
+const commandEval = require("../commands/eval.js");
 
 
 module.exports = {
-    run: async (message) => {
+    run: async (message, client) => {
+
+        if (message.channel.type == "dm") return;
+        if (message.channel.type == "group") return;
 
         let prefix = config.prefix;
         // find the length of the prefix and slice prefix
@@ -32,7 +34,7 @@ module.exports = {
         // If the message is "prefix"
         if (command === "prefix") {
             if (message.member.roles.some(r => ["Moderator", "Admin"].includes(r.name))) {
-                commandPrefix.run(message, command, args);
+                commandPrefix.run(message, command, args, client);
             } else {
                 message.reply("You lack the required permissions/roles");
             }
@@ -61,6 +63,11 @@ module.exports = {
         // If the message is "say"
         if (command === "say") {
             commandSay.run(message, command, args);
+        }
+
+        // If the message is "eval"
+        if (command === "eval") {
+            commandEval.run(message, command, args);
         }
     }
 }
