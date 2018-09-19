@@ -12,6 +12,8 @@ const defPrefix = "!";
 const time = require("./func/time.js");
 // Command handler
 const TrashBot = require("./handler/TrashBot.js");
+// Talked Recently
+const talkedRecently = new Set();
 
 
 client.on("ready", () => {
@@ -64,6 +66,16 @@ fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
 client.on("message", async message => {
     //exit if no prefix
     if (!message.content.startsWith(config.prefix) || message.author.bot) return;
+    // Exit if has talked in 2.5 seconds
+    if (talkedRecently.has(message.author.id))
+        return;
+
+    // Adds the user to the set so that they can't talk for 2.5 seconds
+    talkedRecently.add(message.author.id);
+    setTimeout(() => {
+        // Removes the user from the set after 2.5 seconds
+        talkedRecently.delete(message.author.id);
+    }, 2500);
     //run the command handler
     TrashBot.run(message, client);
 });
@@ -72,6 +84,7 @@ client.on("message", async message => {
 client.on('channelCreate', channel => {
     if (channel.type == "dm") return;
     if (channel.type == "group") return;
+    if (channel.name === "Temp Channel") return;
     const logs = client.channels.find(x => x.name === 'logs');
     if (!logs) {
         console.log("no log channel");
@@ -102,6 +115,7 @@ client.on('channelCreate', channel => {
 client.on('channelDelete', channel => {
     if (channel.type == "dm") return;
     if (channel.type == "group") return;
+    if (channel.name === "Temp Channel") return;
     const logs = client.channels.find(x => x.name === 'logs');
     if (!logs) {
         console.log("no log channel");

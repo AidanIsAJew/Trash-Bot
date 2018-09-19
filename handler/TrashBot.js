@@ -12,6 +12,9 @@ const commandSay = require("../commands/say.js");
 const commandGay = require("../commands/gay.js");
 const commandAudit = require("../commands/audit.js");
 const commandEval = require("../commands/eval.js");
+const commandGoogle = require("../commands/google.js");
+const commandPurge = require("../commands/purge.js");
+const commandKickVoice = require("../commands/kickvoice.js");
 
 
 module.exports = {
@@ -69,5 +72,29 @@ module.exports = {
         if (command === "eval") {
             commandEval.run(message, command, args);
         }
+
+        // If the message is "google"
+        if (command === "google") {
+            commandGoogle.run(message, command, args);
+        }
+
+        // If the message is "purge"
+        if (command === "purge") {
+            if (message.member.roles.some(r => ["Moderator", "Admin"].includes(r.name))) {
+                commandPurge.run(message, command, args);
+            } else {
+                message.reply("You lack the required permissions/roles");
+            }
+        }
+
+        // If the message is "purge"
+        if (command === "kickvoice") {
+            if (message.member.roles.some(r => ["Moderator", "Admin"].includes(r.name))) {
+                commandKickVoice.run(message, command, args, client);
+            } else {
+                message.reply("You lack the required permissions/roles");
+            }
+        }
+
     }
 }
