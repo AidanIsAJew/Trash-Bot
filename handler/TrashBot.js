@@ -15,7 +15,7 @@ const commandEval = require("../commands/eval.js");
 const commandGoogle = require("../commands/google.js");
 const commandPurge = require("../commands/purge.js");
 const commandKickVoice = require("../commands/kickvoice.js");
-
+const commandScramble = require("../commands/scramble.js");
 
 module.exports = {
     run: async (message, client) => {
@@ -96,5 +96,13 @@ module.exports = {
             }
         }
 
+        // If the message is "scramble"
+        if (command === "scramble") {
+            if (message.member.roles.some(r => ["Moderator", "Admin"].includes(r.name))) {
+                commandScramble.run(message, command, args, client);
+            } else {
+                message.reply("You lack the required permissions/roles");
+            }
+        }
     }
 }
