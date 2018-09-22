@@ -108,7 +108,8 @@ client.on('channelCreate', channel => {
         // Set Footer
         .setFooter("Emitted whenever a channel is created.")
         // Set the main content of the embed
-        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " and name: " + channel.name + ", was just created.\n\n");
+        .setDescription("A " + channel.type + " channel with ID: " + channel.id +
+        " and name: " + channel.name + ", was just created.\n\n");
     logs.send(channelCreateE);
     console.log("Channel Created");
 });
@@ -135,7 +136,8 @@ client.on('channelDelete', channel => {
         // Set Footer
         .setFooter("Emitted whenever a channel is deleted.")
         // Set the main content of the embed
-        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " and name: " + channel.name + ", was just deleted.\n\n");
+        .setDescription("A " + channel.type + " channel with ID: " + channel.id +
+        " and name: " + channel.name + ", was just deleted.\n\n");
     console.log("Channel Deleted");
     logs.send(channelDeleteE);
 });
@@ -161,7 +163,8 @@ client.on('channelPinsUpdate', channel => {
         // Set Footer
         .setFooter("Emitted whenever the pins of a channel are updated.")
         // Set the main content of the embed
-        .setDescription("The pins of a channel with ID: " + channel.id + " and name: " + channel.name + ", was just updated.\n\n");
+        .setDescription("The pins of a channel with ID: " + channel.id + " and name: " +
+        channel.name + ", was just updated.\n\n");
     console.log("Pin Updated");
     logs.send(channelPinsUpdateE);
 });
@@ -187,7 +190,8 @@ client.on('channelUpdate', channel => {
         // Set Footer
         .setFooter("Emitted whenever a channel is updated.")
         // Set the main content of the embed
-        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " and name: " + channel.name + ", was just updated.\n\n");
+        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " and name: " +
+        channel.name + ", was just updated.\n\n");
     console.log("Channel Updated");
     logs.send(channelUpdateE);
 });
@@ -283,7 +287,7 @@ client.on('guildBanAdd', userBan => {
         // Set Footer
         .setFooter("Emitted whenever a member is banned from a guild.")
         // Set the main content of the embed
-        .setDescription("A user with ID: " + userBan.id + " and name: " + userBan.username + userBan.tag + ", was just banned.\n\n");
+        .setDescription("A user with ID: " + userBan.id + ", was just banned.\n\n");
     logs.send(guildBanAddE);
     console.log("User Banned");
 });
@@ -307,11 +311,59 @@ client.on('guildBanRemove', userBan => {
         // Set Footer
         .setFooter("Emitted whenever a member is unbanned from a guild.")
         // Set the main content of the embed
-        .setDescription("A user with ID: " + userBan.id + " and name: " + userBan.username + userBan.tag + ", was just unbanned.\n\n");
+        .setDescription("A user with ID: " + userBan.id + ", was just unbanned.\n\n");
     logs.send(guildBanRemoveE);
     console.log("User Unbanned");
 });
 
+client.on("guildMemberRemove", (member) => {
+    const logs = client.channels.find(x => x.name === 'logs');
+    if (!logs) {
+        console.log("no log channel");
+        return;
+    }
+    // Setup the embeded message
+    let guildMemberRemoveE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
+        // Set the title of the field
+        .setTitle('Member Left')
+        // Set the color of the embed
+        .setColor(0x4b23ed)
+        // Set Footer
+        .setFooter("Emitted whenever a user joins a guild.")
+        // Set the main content of the embed
+        .setDescription("A user with ID: " + member.id + " and name: " +
+        member.user.tag + ", just left.\n\n");
+    logs.send(guildMemberRemoveE);
+    console.log("Member Left");
+});
+
+client.on("guildMemberAdd", (member) => {
+  const logs = client.channels.find(x => x.name === 'logs');
+  if (!logs) {
+      console.log("no log channel");
+      return;
+  }
+  // Setup the embeded message
+  let guildMemberAddE = new Discord.RichEmbed()
+      // Set the author
+      .setAuthor(client.user.username, client.user.avatarURL)
+      // Set time
+      .setTimestamp()
+      // Set the title of the field
+      .setTitle('Member Joined')
+      // Set the color of the embed
+      .setColor(0x4b23ed)
+      // Set Footer
+      .setFooter("Emitted whenever a user joins a guild.")
+      // Set the main content of the embed
+      .setDescription("A user with ID: " + member.id + " and name: " +
+      member.user.tag + ", just joined.\n\n");
+  logs.send(guildMemberAddE);
+  console.log("Member Joined");});
 
 // Log bot in using the token from https://discordapp.com/developers/applications/me
 client.login(config.token);

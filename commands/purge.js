@@ -13,7 +13,6 @@ module.exports = {
             const user = testMessage.mentions.users.first();
             // Parse Amount
             const amount = user ? parseInt(testMessage.content.split(' ')[1]) : testMessage.content;
-            console.log(amount);
             if (!amount && !user) return testMessage.reply('Must specify a user and amount, or just an amount, of messages to purge!');
             if (!amount) return testMessage.reply('Must specify an amount to delete!');
             // Fetch 100 messages (will be filtered and lowered up to max amount requested)
@@ -23,10 +22,8 @@ module.exports = {
                 if (user) {
                   const filterBy = user ? user.id : client.user.id;
                   messages = messages.filter(m => m.author.id === filterBy).array().slice(0, amount);
-                  console.log(messages);
               } else {
                 messages = messages.array().slice(0, amount);
-                console.log(messages);
               }
                 testMessage.channel.bulkDelete(messages).catch(error => console.log(error.stack));
             });
@@ -43,10 +40,8 @@ module.exports = {
                 if (user) {
                     const filterBy = user ? user.id : client.user.id;
                     messages = messages.filter(m => m.author.id === filterBy).array().slice(0, amount);
-                    console.log(messages);
                 } else {
                   messages = messages.array().slice(0, amount);
-                  console.log(messages);
                 }
                 message.channel.bulkDelete(messages).catch(error => console.log(error.stack));
             });

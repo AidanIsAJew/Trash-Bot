@@ -54,7 +54,7 @@ module.exports = {
                         errors: ['time'],
                     })
                     .then((collected) => {
-                        message.channel.send(`The collected message was: ${collected.first().content}\n` +
+                        message.channel.send(`The collected message was: \`${collected.first().content}\`\n` +
                                 `Please enter the arguments now.`)
                             .then(() => {
                                 if (collected.first().content === "1") {
@@ -64,9 +64,9 @@ module.exports = {
                                             errors: ['time'],
                                         })
                                         .then((collected) => {
-                                            message.channel.send(`The collected message was: ${collected.first().content}`);
-                                            let args = collected.first().content;
-                                            commandPrefix.run(message, command, args, client);
+                                            message.channel.send(`The collected message was: \`${collected.first().content}\``);
+                                            let testMessage = collected.first();
+                                            commandPrefix.run(message, command, args, client, testMessage);
                                         })
                                         .catch(() => {
                                             message.channel.send('There was no collected message that passed the filter within the time limit!');
@@ -79,7 +79,7 @@ module.exports = {
                                             errors: ['time'],
                                         })
                                         .then((collected) => {
-                                            message.channel.send(`The collected message was: ${collected.first().content}`);
+                                            message.channel.send(`The collected message was: \`${collected.first().content}\``);
                                             let testMessage = collected.first();
                                             commandPurge.run(message, command, args, client, testMessage);
                                         })
@@ -88,10 +88,34 @@ module.exports = {
                                         });
                                 }
                                 if (collected.first().content === "3") {
-                                    commandKickVoice.run(message, command, args, client);
+                                    message.channel.awaitMessages(response => response.author === author, {
+                                            max: 1,
+                                            time: 30000,
+                                            errors: ['time'],
+                                        })
+                                        .then((collected) => {
+                                            message.channel.send(`The collected message was: \`${collected.first().content}\``);
+                                            let testMessage = collected.first();
+                                            commandKickVoice.run(message, command, args, client, testMessage);
+                                        })
+                                        .catch(() => {
+                                            message.channel.send('There was no collected message that passed the filter within the time limit!');
+                                        });
                                 }
                                 if (collected.first().content === "4") {
-                                    commandScramble.run(message, command, args, client);
+                                  message.channel.awaitMessages(response => response.author === author, {
+                                          max: 1,
+                                          time: 30000,
+                                          errors: ['time'],
+                                      })
+                                      .then((collected) => {
+                                          message.channel.send(`The collected message was: \`${collected.first().content}\``);
+                                          let testMessage = collected.first();
+                                          commandScramble.run(message, command, args, client, testMessage);
+                                      })
+                                      .catch(() => {
+                                          message.channel.send('There was no collected message that passed the filter within the time limit!');
+                                      });
                                 }
                                 if (collected.first().content === "5") {
                                     commandLastReboot.run(message, command, args, lastReboot);
