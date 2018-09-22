@@ -14,12 +14,13 @@ const time = require("./func/time.js");
 const TrashBot = require("./handler/TrashBot.js");
 // Talked Recently
 const talkedRecently = new Set();
-
+// Set time of last reboot
+const lastReboot = time.run();
 
 client.on("ready", () => {
-    console.log(time.run() + `Logged in as ${client.user.tag}\n` + `Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.\n\n`);
+    console.log(time.run() + ` : ` + `Logged in as ${client.user.tag}\n` + `Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.\n\n`);
     // Sets the game
-    client.user.setActivity(`Faithfuly serving the TRASH server since 9/4/18!`);
+    client.user.setActivity(`Prefix: ` + config.prefix);
 
     // create and assign role to me (aidan)
     const guildDevServer = client.guilds.find(x => x.name === "Dev Server");
@@ -77,7 +78,7 @@ client.on("message", async message => {
         talkedRecently.delete(message.author.id);
     }, 2500);
     //run the command handler
-    TrashBot.run(message, client);
+    TrashBot.run(message, client, lastReboot);
 });
 
 

@@ -10,7 +10,8 @@ const defPrefix = "!";
 module.exports = {
     run: async (message, command, args, client) => {
         // Gets the prefix from the command (eg. "!prefix +" it will take the "+" from it)
-        let newPrefix = message.content.split(" ").slice(1, 2)[0];
+        //let newPrefix = message.content.split(" ").slice(1, 2)[0];
+        let newPrefix = args;
         // Makes sure there is a new prefix
         if (newPrefix === undefined) {
             message.reply('Please enter a prefix.');
@@ -24,6 +25,12 @@ module.exports = {
 
         // Save the file.
         fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
+
+        // Set user Activity
+        client.user.setActivity(`Prefix: ` + config.prefix);
+
+        // React to message
+        message.react('👌');
 
         // Setup the embeded message
         let prefixreply = new Discord.RichEmbed()
