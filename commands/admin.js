@@ -103,34 +103,22 @@ module.exports = {
                                         });
                                 }
                                 if (collected.first().content === "4") {
-                                    message.channel.awaitMessages(response => response.author === author, {
-                                            max: 1,
-                                            time: 30000,
-                                            errors: ['time'],
-                                        })
-                                        .then((collected) => {
-                                            message.channel.send(`The collected message was: \`${collected.first().content}\``);
-                                            let testMessage = collected.first();
-                                            commandScramble.run(message, command, args, client, testMessage);
-                                        })
-                                        .catch(() => {
-                                            message.channel.send('There was no collected message that passed the filter within the time limit!');
-                                        });
+                                  message.channel.awaitMessages(response => response.author === author, {
+                                          max: 1,
+                                          time: 30000,
+                                          errors: ['time'],
+                                      })
+                                      .then((collected) => {
+                                          message.channel.send(`The collected message was: \`${collected.first().content}\``);
+                                          let testMessage = collected.first();
+                                          commandScramble.run(message, command, args, client, testMessage);
+                                      })
+                                      .catch(() => {
+                                          message.channel.send('There was no collected message that passed the filter within the time limit!');
+                                      });
                                 }
                                 if (collected.first().content === "5") {
-                                    message.channel.awaitMessages(response => response.author === author, {
-                                            max: 1,
-                                            time: 30000,
-                                            errors: ['time'],
-                                        })
-                                        .then((collected) => {
-                                            message.channel.send(`The collected message was: \`${collected.first().content}\``);
-                                            let testMessage = collected.first();
-                                            commandLastReboot.run(message, command, args, lastReboot);
-                                        })
-                                        .catch(() => {
-                                            message.channel.send('There was no collected message that passed the filter within the time limit!');
-                                        });
+                                    commandLastReboot.run(message, command, args, lastReboot);
                                 }
                             });
                     })
