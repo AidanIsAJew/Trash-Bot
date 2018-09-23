@@ -3,8 +3,6 @@ const Discord = require("discord.js");
 const fs = require("fs")
 // Config
 const config = require("../settings/config.json");
-// Defualt prefix
-const defPrefix = "!";
 // Commands
 const commandPing = require("../commands/ping.js");
 const commandPrefix = require("../commands/prefix.js");
@@ -20,20 +18,17 @@ const commandLastReboot = require("../commands/lastReboot.js");
 const commandAdmin = require("../commands/admin.js");
 
 module.exports = {
-    run: async (message, client, lastReboot) => {
+    run: async (message, client, lastReboot, args, command, guildConf) => {
 
         if (message.channel.type == "dm") return;
         if (message.channel.type == "group") return;
 
-        let prefix = config.prefix;
-        // find the length of the prefix and slice prefix
-        // split the command from the args
-        const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-        // get just the command
-        const command = args.shift().toLowerCase();
+        const mod = guildConf.modRole;
+        const admin = guildConf.adminRole;
 
-        const mod = message.guild.roles.find(x => x.name === "Moderator");
-        const admin = message.guild.roles.find(x => x.name === "Admin");
+        if (command === "settings") {
+          console.log(client.settings.get(message.guild.id));
+        }
 
         // If the message is "ping"
         if (command === "ping") {
@@ -52,7 +47,7 @@ module.exports = {
 
         // If the message is "eval"
         if (command === "eval") {
-            commandEval.run(message, command, args);
+            commandEval.run(message, command, args, client);
         }
 
         // If the message is "google"
@@ -67,7 +62,7 @@ module.exports = {
 
         // IF the message is "admin"
         if (command === "admin") {
-            if (message.member.roles.some(r => ["Moderator", "Admin"].includes(r.name))) {
+            if (message.member.roles.some(r => [mod, admin].includes(r.name))) {
                 commandAdmin.run(message, command, args, client, lastReboot);
             } else {
                 message.reply("You lack the required permissions/roles");
@@ -76,7 +71,7 @@ module.exports = {
 
         // If the message is "purge"
         if (command === "purge") {
-            if (message.member.roles.some(r => ["Moderator", "Admin"].includes(r.name))) {
+            if (message.member.roles.some(r => [mod, admin].includes(r.name))) {
                 commandPurge.run(message, command, args, client);
             } else {
                 message.reply("You lack the required permissions/roles");
@@ -85,7 +80,7 @@ module.exports = {
 
         // If the message is "kickvoice"
         if (command === "kickvoice") {
-            if (message.member.roles.some(r => ["Moderator", "Admin"].includes(r.name))) {
+            if (message.member.roles.some(r => [mod, admin].includes(r.name))) {
                 commandKickVoice.run(message, command, args, client);
             } else {
                 message.reply("You lack the required permissions/roles");
@@ -94,7 +89,7 @@ module.exports = {
 
         // If the message is "scramble"
         if (command === "scramble") {
-            if (message.member.roles.some(r => ["Moderator", "Admin"].includes(r.name))) {
+            if (message.member.roles.some(r => [mod, admin].includes(r.name))) {
                 commandScramble.run(message, command, args, client);
             } else {
                 message.reply("You lack the required permissions/roles");
@@ -103,7 +98,7 @@ module.exports = {
 
         // If the message is "prefix"
         if (command === "prefix") {
-            if (message.member.roles.some(r => ["Moderator", "Admin"].includes(r.name))) {
+            if (message.member.roles.some(r => [mod, admin].includes(r.name))) {
                 commandPrefix.run(message, command, args, client);
             } else {
                 message.reply("You lack the required permissions/roles");
@@ -112,8 +107,10 @@ module.exports = {
 
         // If the message is "audit"
         if (command === "audit") {
+            // Admin ID
+            let AD = message.guild.roles.find(x => x.name === admin).id;
             // Admin Protected Command
-            if (message.member.roles.has(admin.id)) {
+            if (message.member.roles.has(AD)) {
                 commandAudit.run(message, command, args);
             } else {
                 message.reply("You lack the required permissions/roles");
