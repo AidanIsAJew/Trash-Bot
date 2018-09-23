@@ -108,8 +108,8 @@ client.on('channelCreate', channel => {
         // Set Footer
         .setFooter("Emitted whenever a channel is created.")
         // Set the main content of the embed
-        .setDescription("A " + channel.type + " channel with ID: " + channel.id +
-        " and name: " + channel.name + ", was just created.\n\n");
+        .setDescription("A *" + channel.type + "* channel with ID: **" + channel.id +
+        "** and name: **" + channel.name + "**, was just created.\n\n");
     logs.send(channelCreateE);
     console.log("Channel Created");
 });
@@ -136,8 +136,8 @@ client.on('channelDelete', channel => {
         // Set Footer
         .setFooter("Emitted whenever a channel is deleted.")
         // Set the main content of the embed
-        .setDescription("A " + channel.type + " channel with ID: " + channel.id +
-        " and name: " + channel.name + ", was just deleted.\n\n");
+        .setDescription("A *" + channel.type + "* channel with ID: **" + channel.id +
+        "** and name: **" + channel.name + "**, was just deleted.\n\n");
     console.log("Channel Deleted");
     logs.send(channelDeleteE);
 });
@@ -163,8 +163,8 @@ client.on('channelPinsUpdate', channel => {
         // Set Footer
         .setFooter("Emitted whenever the pins of a channel are updated.")
         // Set the main content of the embed
-        .setDescription("The pins of a channel with ID: " + channel.id + " and name: " +
-        channel.name + ", was just updated.\n\n");
+        .setDescription("The pins of a channel with ID: **" + channel.id + "** and name: **" +
+        channel.name + "**, was just updated.\n\n");
     console.log("Pin Updated");
     logs.send(channelPinsUpdateE);
 });
@@ -190,7 +190,7 @@ client.on('channelUpdate', channel => {
         // Set Footer
         .setFooter("Emitted whenever a channel is updated.")
         // Set the main content of the embed
-        .setDescription("A " + channel.type + " channel with ID: " + channel.id + " and name: " +
+        .setDescription("A *" + channel.type + "* channel with ID: **" + channel.id + "** and name: " +
         channel.name + ", was just updated.\n\n");
     console.log("Channel Updated");
     logs.send(channelUpdateE);
@@ -215,7 +215,7 @@ client.on('emojiCreate', emoji => {
         // Set Footer
         .setFooter("Emitted whenever a custom emoji is created in a guild.")
         // Set the main content of the embed
-        .setDescription("A emoji with name: " + emoji.name + ", was just created.\n\n");
+        .setDescription("A emoji with name: **" + emoji.name + "**, was just created.\n\n");
     logs.send(emojiCreateE);
     console.log("Emoji Created");
 });
@@ -239,7 +239,7 @@ client.on('emojiDelete', emoji => {
         // Set Footer
         .setFooter("Emitted whenever a custom emoji is created in a guild.")
         // Set the main content of the embed
-        .setDescription("A emoji with name: " + emoji.name + ", was just deleted.\n\n");
+        .setDescription("A emoji with name: **" + emoji.name + "**, was just deleted.\n\n");
     logs.send(emojiDeleteE);
     console.log("Emoji Delted");
 });
@@ -263,7 +263,7 @@ client.on('emojiUpdate', emoji => {
         // Set Footer
         .setFooter("Emitted whenever a custom emoji is created in a guild.")
         // Set the main content of the embed
-        .setDescription("A emoji with name: " + emoji.name + ", was just updated.\n\n");
+        .setDescription("A emoji with name: **" + emoji.name + "**, was just updated.\n\n");
     logs.send(emojiUpdateE);
     console.log("Emoji Updated");
 });
@@ -287,7 +287,7 @@ client.on('guildBanAdd', userBan => {
         // Set Footer
         .setFooter("Emitted whenever a member is banned from a guild.")
         // Set the main content of the embed
-        .setDescription("A user with ID: " + userBan.id + ", was just banned.\n\n");
+        .setDescription("A user with ID: **" + userBan.id + "**, was just banned.\n\n");
     logs.send(guildBanAddE);
     console.log("User Banned");
 });
@@ -311,7 +311,7 @@ client.on('guildBanRemove', userBan => {
         // Set Footer
         .setFooter("Emitted whenever a member is unbanned from a guild.")
         // Set the main content of the embed
-        .setDescription("A user with ID: " + userBan.id + ", was just unbanned.\n\n");
+        .setDescription("A user with ID: **" + userBan.id + "**, was just unbanned.\n\n");
     logs.send(guildBanRemoveE);
     console.log("User Unbanned");
 });
@@ -335,8 +335,8 @@ client.on("guildMemberRemove", (member) => {
         // Set Footer
         .setFooter("Emitted whenever a user joins a guild.")
         // Set the main content of the embed
-        .setDescription("A user with ID: " + member.id + " and name: " +
-        member.user.tag + ", just left.\n\n");
+        .setDescription("A user with ID: **" + member.id + "** and name: **" +
+        member.user.tag + "**, just left.\n\n");
     logs.send(guildMemberRemoveE);
     console.log("Member Left");
 });
@@ -360,8 +360,8 @@ client.on("guildMemberAdd", (member) => {
       // Set Footer
       .setFooter("Emitted whenever a user joins a guild.")
       // Set the main content of the embed
-      .setDescription("A user with ID: " + member.id + " and name: " +
-      member.user.tag + ", just joined.\n\n");
+      .setDescription("A user with ID: **" + member.id + "** and name: **" +
+      member.user.tag + "**, just joined.\n\n");
   logs.send(guildMemberAddE);
   console.log("Member Joined");});
 
