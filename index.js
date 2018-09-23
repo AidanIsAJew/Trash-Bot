@@ -3,7 +3,7 @@ const Discord = require("discord.js");
 // Create an instance of a Discord client
 const client = new Discord.Client();
 // I dont remeber what this does \_O-O_/
-const fs = require("fs")
+const fs = require("fs");
 // Config
 const config = require("./settings/config.json");
 // Defualt prefix
@@ -16,6 +16,8 @@ const TrashBot = require("./handler/TrashBot.js");
 const talkedRecently = new Set();
 // Set time of last reboot
 const lastReboot = time.run();
+//
+const starBoard = require("./func/starBoard.js");
 
 client.on("ready", () => {
     console.log(time.run() + ` : ` + `Logged in as ${client.user.tag}\n` + `Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.\n\n`);
@@ -109,7 +111,7 @@ client.on('channelCreate', channel => {
         .setFooter("Emitted whenever a channel is created.")
         // Set the main content of the embed
         .setDescription("A *" + channel.type + "* channel with ID: **" + channel.id +
-        "** and name: **" + channel.name + "**, was just created.\n\n");
+            "** and name: **" + channel.name + "**, was just created.\n\n");
     logs.send(channelCreateE);
     console.log("Channel Created");
 });
@@ -137,7 +139,7 @@ client.on('channelDelete', channel => {
         .setFooter("Emitted whenever a channel is deleted.")
         // Set the main content of the embed
         .setDescription("A *" + channel.type + "* channel with ID: **" + channel.id +
-        "** and name: **" + channel.name + "**, was just deleted.\n\n");
+            "** and name: **" + channel.name + "**, was just deleted.\n\n");
     console.log("Channel Deleted");
     logs.send(channelDeleteE);
 });
@@ -164,7 +166,7 @@ client.on('channelPinsUpdate', channel => {
         .setFooter("Emitted whenever the pins of a channel are updated.")
         // Set the main content of the embed
         .setDescription("The pins of a channel with ID: **" + channel.id + "** and name: **" +
-        channel.name + "**, was just updated.\n\n");
+            channel.name + "**, was just updated.\n\n");
     console.log("Pin Updated");
     logs.send(channelPinsUpdateE);
 });
@@ -191,7 +193,7 @@ client.on('channelUpdate', channel => {
         .setFooter("Emitted whenever a channel is updated.")
         // Set the main content of the embed
         .setDescription("A *" + channel.type + "* channel with ID: **" + channel.id + "** and name: " +
-        channel.name + ", was just updated.\n\n");
+            channel.name + ", was just updated.\n\n");
     console.log("Channel Updated");
     logs.send(channelUpdateE);
 });
@@ -336,34 +338,39 @@ client.on("guildMemberRemove", (member) => {
         .setFooter("Emitted whenever a user joins a guild.")
         // Set the main content of the embed
         .setDescription("A user with ID: **" + member.id + "** and name: **" +
-        member.user.tag + "**, just left.\n\n");
+            member.user.tag + "**, just left.\n\n");
     logs.send(guildMemberRemoveE);
     console.log("Member Left");
 });
 
 client.on("guildMemberAdd", (member) => {
-  const logs = client.channels.find(x => x.name === 'logs');
-  if (!logs) {
-      console.log("no log channel");
-      return;
-  }
-  // Setup the embeded message
-  let guildMemberAddE = new Discord.RichEmbed()
-      // Set the author
-      .setAuthor(client.user.username, client.user.avatarURL)
-      // Set time
-      .setTimestamp()
-      // Set the title of the field
-      .setTitle('Member Joined')
-      // Set the color of the embed
-      .setColor(0x4b23ed)
-      // Set Footer
-      .setFooter("Emitted whenever a user joins a guild.")
-      // Set the main content of the embed
-      .setDescription("A user with ID: **" + member.id + "** and name: **" +
-      member.user.tag + "**, just joined.\n\n");
-  logs.send(guildMemberAddE);
-  console.log("Member Joined");});
+    const logs = client.channels.find(x => x.name === 'logs');
+    if (!logs) {
+        console.log("no log channel");
+        return;
+    }
+    // Setup the embeded message
+    let guildMemberAddE = new Discord.RichEmbed()
+        // Set the author
+        .setAuthor(client.user.username, client.user.avatarURL)
+        // Set time
+        .setTimestamp()
+        // Set the title of the field
+        .setTitle('Member Joined')
+        // Set the color of the embed
+        .setColor(0x4b23ed)
+        // Set Footer
+        .setFooter("Emitted whenever a user joins a guild.")
+        // Set the main content of the embed
+        .setDescription("A user with ID: **" + member.id + "** and name: **" +
+            member.user.tag + "**, just joined.\n\n");
+    logs.send(guildMemberAddE);
+    console.log("Member Joined");
+});
+
+client.on("messageReactionAdd", (reaction, user) => {
+    starBoard.run(reaction, user);
+});
 
 // Log bot in using the token from https://discordapp.com/developers/applications/me
 client.login(config.token);
