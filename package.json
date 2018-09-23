@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "better-sqlite-pool": "^0.1.2",
     "cheerio": "^1.0.0-rc.2",
     "discord.js": "^11.4.2",
     "enmap": "^4.3.0",
