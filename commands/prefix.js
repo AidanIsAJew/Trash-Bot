@@ -3,8 +3,7 @@ const Discord = require("discord.js");
 const fs = require("fs")
 // Config
 const config = require("../settings/config.json");
-// Defualt prefix
-const defPrefix = "!";
+
 
 module.exports = {
     run: async (message, command, args, client, testMessage) => {
@@ -18,16 +17,30 @@ module.exports = {
                 // Return jf no new prefix was defined
                 return;
             }
-            // Change the configuration in memory
-            console.log(`\nCurrent Prefix: ` + config.prefix + `\nNew Prefix: ` + newPrefix);
-            let oldprefix = config.prefix;
-            config.prefix = newPrefix;
+            let oldprefix = client.settings.get(testMessage.guild.id, "prefix");
+            console.log(`\nCurrent Prefix: ` + oldprefix + `\nNew Prefix: ` + newPrefix);
 
-            // Save the file.
-            fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
+            //config.prefix = newPrefix;
 
+            const [prop, ...value] = ["prefix", newPrefix];
+
+            // Example:
+            // prop: "prefix"
+            // value: ["+"]
+            // (yes it's an array, we join it further down!)
+
+            // We can check that the key exists to avoid having multiple useless,
+            // unused keys in the config:
+            if (!client.settings.has(testMessage.guild.id, prop)) {
+                return testMessage.reply("This key is not in the configuration.");
+            }
+
+            // Now we can finally change the value. Here we only have strings for values
+            // so we won't bother trying to make sure it's the right type and such.
+            client.settings.set(testMessage.guild.id, value.join(" "), prop);
+            testMessage.channel.send(`Guild configuration item ${prop} has been changed to:\n\`${value.join(" ")}\``);
             // Set user Activity
-            client.user.setActivity(`Prefix: ` + config.prefix);
+            client.user.setActivity(`Prefix: ` + client.settings.get(testMessage.guild.id, prop));
 
             // React to message
             if (testMessage) {
@@ -49,7 +62,7 @@ module.exports = {
                 // Set Footer
                 .setFooter("Emitted whenever the prefix is changed in a guild.")
                 // Set the main content of the embed
-                .setDescription('\nOld prefix: ' + oldprefix + '\nNew prefix: ' + config.prefix);
+                .setDescription('\nOld prefix: ' + oldprefix + '\nNew prefix: ' + client.settings.get(testMessage.guild.id, prop));
             // Send the embed to the same channel as the message
 
             const logs = message.guild.channels.find(x => x.name === 'logs');
@@ -66,16 +79,30 @@ module.exports = {
                 // Return jf no new prefix was defined
                 return;
             }
-            // Change the configuration in memory
-            console.log(`\nCurrent Prefix: ` + config.prefix + `\nNew Prefix: ` + newPrefix);
-            let oldprefix = config.prefix;
-            config.prefix = newPrefix;
+            let oldprefix = client.settings.get(message.guild.id, "prefix");
+            console.log(`\nCurrent Prefix: ` + oldprefix + `\nNew Prefix: ` + newPrefix);
 
-            // Save the file.
-            fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
+            //config.prefix = newPrefix;
 
+            const [prop, ...value] = ["prefix", newPrefix];
+
+            // Example:
+            // prop: "prefix"
+            // value: ["+"]
+            // (yes it's an array, we join it further down!)
+
+            // We can check that the key exists to avoid having multiple useless,
+            // unused keys in the config:
+            if (!client.settings.has(message.guild.id, prop)) {
+                return message.reply("This key is not in the configuration.");
+            }
+
+            // Now we can finally change the value. Here we only have strings for values
+            // so we won't bother trying to make sure it's the right type and such.
+            client.settings.set(message.guild.id, value.join(" "), prop);
+            message.channel.send(`Guild configuration item ${prop} has been changed to:\n\`${value.join(" ")}\``);
             // Set user Activity
-            client.user.setActivity(`Prefix: ` + config.prefix);
+            client.user.setActivity(`Prefix: ` + client.settings.get(message.guild.id, prop));
 
             // React to message
             if (testMessage) {
@@ -97,7 +124,7 @@ module.exports = {
                 // Set Footer
                 .setFooter("Emitted whenever the prefix is changed in a guild.")
                 // Set the main content of the embed
-                .setDescription('\nOld prefix: ' + oldprefix + '\nNew prefix: ' + config.prefix);
+                .setDescription('\nOld prefix: ' + oldprefix + '\nNew prefix: ' + client.settings.get(message.guild.id, prop));
             // Send the embed to the same channel as the message
 
             const logs = message.guild.channels.find(x => x.name === 'logs');

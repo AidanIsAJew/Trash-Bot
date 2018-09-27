@@ -7,7 +7,7 @@ const config = require("../settings/config.json");
 
 module.exports = {
     // This is where all the action happens.
-    async run(reaction, user) {
+    async run(reaction, user, client) {
         const message = reaction.message;
         // This is the first check where we check to see if the reaction is not the unicode star emote.
         if (reaction.emoji.name !== '⭐') return;

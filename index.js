@@ -1,28 +1,50 @@
-// Import the discord.js module
+// Import the discord.js module //
 const Discord = require("discord.js");
-// Create an instance of a Discord client
+// Create an instance of a Discord client //
 const client = new Discord.Client();
-// I dont remeber what this does \_O-O_/
+
+// Used when writing to json //
 const fs = require("fs");
-// Config
+// Config //
 const config = require("./settings/config.json");
-// Defualt prefix
-const defPrefix = "!";
+// Command handler //
+const TrashBot = require("./handler/TrashBot.js");
+
+// Functions //
 // Time
 const time = require("./func/time.js");
-// Command handler
-const TrashBot = require("./handler/TrashBot.js");
-// Talked Recently
-const talkedRecently = new Set();
 // Set time of last reboot
 const lastReboot = time.run();
-//
+// Star board
 const starBoard = require("./func/starBoard.js");
+
+// Talked Recently //
+const talkedRecently = new Set();
+
+// Enmap //
+const Enmap = require('enmap');
+
+client.settings = new Enmap({
+    name: "settings",
+    fetchAll: false,
+    autoFetch: true,
+    cloneLevel: 'deep'
+});
+// Just setting up a default configuration object here, to have something to insert.
+const defaultSettings = {
+    prefix: "!",
+    modLogChannel: "log",
+    modRole: "Moderator",
+    adminRole: "Admin",
+    welcomeChannel: "general",
+    welcomeMessage: "Say hello to {{user}}, everyone!",
+    starboardChannel: "star-board"
+}
+
 
 client.on("ready", () => {
     console.log(time.run() + ` : ` + `Logged in as ${client.user.tag}\n` + `Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.\n\n`);
-    // Sets the game
-    client.user.setActivity(`Prefix: ` + config.prefix);
+
 
     // create and assign role to me (aidan)
     const guildDevServer = client.guilds.find(x => x.name === "Dev Server");
@@ -45,6 +67,9 @@ client.on("ready", () => {
             aidanInGuild.addRole(ownerRole.id).catch(console.error);
         }
     }
+
+    // Sets the game
+    client.user.setActivity(`Prefix: ` + client.settings.get(guildDevServer.id, "prefix"));
 });
 
 // Bot is joins a guild.
@@ -55,20 +80,18 @@ client.on("guildCreate", guild => {
 // Bot is removed from a guild.
 client.on("guildDelete", guild => {
     console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
+    client.settings.delete(guild.id);
 });
 
 // Error Handler
 client.on("error", console.error);
 
-// Sets and writes defualt prefix
-config.prefix = defPrefix;
-fs.writeFile("./config.json", JSON.stringify(config), (err) => console.error);
-
-
 // Create an event listener for messages
 client.on("message", async message => {
     //exit if no prefix
-    if (!message.content.startsWith(config.prefix) || message.author.bot) return;
+    if (!message.guild || message.author.bot) return;
+    const guildConf = client.settings.ensure(message.guild.id, defaultSettings);
+    if (message.content.indexOf(guildConf.prefix) !== 0) return;
     // Exit if has talked in 2.5 seconds
     if (talkedRecently.has(message.author.id))
         return;
@@ -79,8 +102,11 @@ client.on("message", async message => {
         // Removes the user from the set after 2.5 seconds
         talkedRecently.delete(message.author.id);
     }, 2500);
+
+    const args = message.content.split(/\s+/g);
+    const command = args.shift().slice(guildConf.prefix.length).toLowerCase();
     //run the command handler
-    TrashBot.run(message, client, lastReboot);
+    TrashBot.run(message, client, lastReboot, args, command, guildConf);
 });
 
 
@@ -344,6 +370,16 @@ client.on("guildMemberRemove", (member) => {
 });
 
 client.on("guildMemberAdd", (member) => {
+    client.settings.ensure(member.guild.id, defaultSettings);
+    // First, get the welcome message using get:
+    let welcomeMessage = client.settings.get(member.guild.id, "welcomeMessage");
+    // Our welcome message has a bit of a placeholder, let's fix that:
+    welcomeMessage = welcomeMessage.replace("{{user}}", member.user.tag)
+    // we'll send to the welcome channel.
+    member.guild.channels
+        .find("name", client.settings.get(member.guild.id, "welcomeChannel"))
+        .send(welcomeMessage)
+        .catch(console.error);
     const logs = client.channels.find(x => x.name === 'logs');
     if (!logs) {
         console.log("no log channel");
@@ -369,7 +405,7 @@ client.on("guildMemberAdd", (member) => {
 });
 
 client.on("messageReactionAdd", (reaction, user) => {
-    starBoard.run(reaction, user);
+    starBoard.run(reaction, user, client);
 });
 
 // Log bot in using the token from https://discordapp.com/developers/applications/me

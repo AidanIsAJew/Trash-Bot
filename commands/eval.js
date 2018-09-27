@@ -11,26 +11,58 @@ const owner = config.ownerID;
 const coOwner = config.coOwnerID;
 
 module.exports = {
-    run: async (message, command, args) => {
+    run: async (message, command, args, client) => {
         const clean = text => {
             if (typeof(text) === "string")
                 return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
             else
                 return text;
         }
-        if (message.author.id === owner || message.author.id === coOwner) {} else {message.channel.send(`Permission Denied!`); return;}
+        if (message.author.id === owner || message.author.id === coOwner) {} else {
+            message.channel.send(`Permission Denied!`);
+            return;
+        }
         try {
             const code = args.join(" ");
+            start = Date.now();
             let evaled = eval(code);
+            end = Date.now();
 
             if (typeof evaled !== "string")
                 evaled = require("util").inspect(evaled);
 
-            message.channel.send(clean(evaled), {
-                code: "xl"
-            });
+            let evaledE = new Discord.RichEmbed()
+                // Set the author
+                .setAuthor(client.user.username, client.user.avatarURL)
+                // Set time
+                .setTimestamp()
+                // Set the title of the field
+                .setTitle('EVALED')
+                // Set the color of the embed
+                .setColor(0x2bf21d)
+                // Set the main content of the embed
+                .setDescription(`Finished evaluating in ${end - start} ms.`)
+                .addField('INPUT', `\`\`\`js\n${clean(code)}\n\`\`\``)
+                .addField('RESULT', `\`\`\`js\n${clean(evaled)}\n\`\`\``);
+            message.channel.send(evaledE);
+            //message.channel.send(clean(evaled), {
+            //    code: "xl"
+            //});
         } catch (err) {
-            message.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
+          const code = args.join(" ");
+          let errE = new Discord.RichEmbed()
+              // Set the author
+              .setAuthor(client.user.username, client.user.avatarURL)
+              // Set time
+              .setTimestamp()
+              // Set the title of the field
+              .setTitle('EVALED')
+              // Set the color of the embed
+              .setColor(0xff4500)
+              .addField('INPUT', `\`\`\`js\n${clean(code)}\n\`\`\``)
+              .addField('ERROR', `\`\`\`js\n${clean(err)}\n\`\`\``);
+          message.channel.send(errE);
+            //message.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
         }
     }
 }
