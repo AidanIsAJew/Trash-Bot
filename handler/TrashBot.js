@@ -16,6 +16,7 @@ const commandKickVoice = require("../commands/kickvoice.js");
 const commandScramble = require("../commands/scramble.js");
 const commandLastReboot = require("../commands/lastReboot.js");
 const commandAdmin = require("../commands/admin.js");
+const commandSetConf = require("../commands/setconf.js");
 
 module.exports = {
     run: async (message, client, lastReboot, args, command, guildConf) => {
@@ -100,6 +101,15 @@ module.exports = {
         if (command === "prefix") {
             if (message.member.roles.some(r => [mod, admin].includes(r.name))) {
                 commandPrefix.run(message, command, args, client);
+            } else {
+                message.reply("You lack the required permissions/roles");
+            }
+        }
+
+        // If the message is "setconf"
+        if (command === "setconf") {
+            if (message.member.roles.some(r => [mod, admin].includes(r.name))) {
+                commandSetConf.run(message, command, args, client);
             } else {
                 message.reply("You lack the required permissions/roles");
             }
