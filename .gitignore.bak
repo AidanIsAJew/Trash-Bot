@@ -1,4 +1,4 @@
 node_modules
 config.json
-Test.js
-music.mp3
+bak.config.json
+push-to-git.bat
