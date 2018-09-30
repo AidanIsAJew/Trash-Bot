@@ -302,7 +302,7 @@ client.on('emojiUpdate', emoji => {
     console.log("Emoji Updated");
 });
 
-client.on('guildBanAdd', userBan => {
+client.on('guildBanAdd', (userBan, member) => {
     const logs = client.channels.find(x => x.name === 'logs');
     if (!logs) {
         console.log("no log channel");
@@ -321,12 +321,12 @@ client.on('guildBanAdd', userBan => {
         // Set Footer
         .setFooter("Emitted whenever a member is banned from a guild.")
         // Set the main content of the embed
-        .setDescription("A user with ID: **" + userBan.id + "**, was just banned.\n\n");
+        .setDescription("A user with name: **" + member.tag + "**, was just banned.\n\n");
     logs.send(guildBanAddE);
     console.log("User Banned");
 });
 
-client.on('guildBanRemove', userBan => {
+client.on('guildBanRemove', (userBan, member) => {
     const logs = client.channels.find(x => x.name === 'logs');
     if (!logs) {
         console.log("no log channel");
@@ -345,7 +345,7 @@ client.on('guildBanRemove', userBan => {
         // Set Footer
         .setFooter("Emitted whenever a member is unbanned from a guild.")
         // Set the main content of the embed
-        .setDescription("A user with ID: **" + userBan.id + "**, was just unbanned.\n\n");
+        .setDescription("A user with name: **" + member.tag + "**, was just unbanned.\n\n");
     logs.send(guildBanRemoveE);
     console.log("User Unbanned");
 });
