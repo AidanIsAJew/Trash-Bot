@@ -1,420 +1,81 @@
-// Import the discord.js module //
+// This will check if the node version you are running is the required
+// Node version, if it isn't it will throw the following error to inform
+// you.
+if (Number(process.version.slice(1).split(".")[0]) < 8) throw new Error("Node 8.0.0 or higher is required. Update Node on your system.");
+
+// Load up the discord.js library
 const Discord = require("discord.js");
-// Create an instance of a Discord client //
+// We also load the rest of the things we need in this file:
+const { promisify } = require("util");
+const readdir = promisify(require("fs").readdir);
+const Enmap = require("enmap");
+
+// This is your client. Some people call it `bot`, some people call it `self`,
+// some might call it `cootchie`. Either way, when you see `client.something`,
+// or `bot.something`, this is what we're refering to. Your client.
 const client = new Discord.Client();
 
-// Used when writing to json //
-const fs = require("fs");
-// Config //
-const config = require("./settings/config.json");
-// Command handler //
-const TrashBot = require("./handler/TrashBot.js");
+// Here we load the config file that contains our token and our prefix values.
+client.config = require("./config.js");
+// client.config.token contains the bot's token
+// client.config.prefix contains the message prefix
 
-// Functions //
-// Time
-const time = require("./func/time.js");
-// Set time of last reboot
-const lastReboot = time.run();
-// Star board
-const starBoard = require("./func/starBoard.js");
+// Require our logger
+client.logger = require("./modules/Logger");
 
-// Talked Recently //
-const talkedRecently = new Set();
+// Let's start by getting some useful functions that we'll use throughout
+// the bot, like logs and elevation features.
+require("./modules/functions.js")(client);
 
-// Enmap //
-const Enmap = require('enmap');
+// Aliases and commands are put in collections where they can be read from,
+// catalogued, listed, etc.
+client.commands = new Enmap();
+client.aliases = new Enmap();
 
-client.settings = new Enmap({
-    name: "settings",
-    fetchAll: false,
-    autoFetch: true,
-    cloneLevel: 'deep'
-});
+// Now we integrate the use of Evie's awesome Enhanced Map module, which
+// essentially saves a collection to disk. This is great for per-server configs,
+// and makes things extremely easy for this purpose.
+client.settings = new Enmap({name: "settings"});
 
-client.warning = new Enmap({name: "warning"});
-// Just setting up a default configuration object here, to have something to insert.
-const defaultSettings = {
-    prefix: "!",
-    modLogChannel: "log",
-    modRole: "Moderator",
-    adminRole: "Admin",
-    welcomeChannel: "general",
-    welcomeMessage: "Say hello to {{user}}, everyone!",
-    starboardChannel: "star-board"
-}
+// We're doing real fancy node 8 async/await stuff here, and to do that
+// we need to wrap stuff in an anonymous function. It's annoying but it works.
 
+const init = async () => {
 
-client.on("ready", () => {
-    console.log(time.run() + ` : ` + `Logged in as ${client.user.tag}\n` + `Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.\n\n`);
+  // Here we load **commands** into memory, as a collection, so they're accessible
+  // here and everywhere else.
+  const cmdFiles = await readdir("./commands/");
+  client.logger.log(`Loading a total of ${cmdFiles.length} commands.`);
+  cmdFiles.forEach(f => {
+    if (!f.endsWith(".js")) return;
+    const response = client.loadCommand(f);
+    if (response) console.log(response);
+  });
 
+  // Then we load events, which will include our message and ready event.
+  const evtFiles = await readdir("./events/");
+  client.logger.log(`Loading a total of ${evtFiles.length} events.`);
+  evtFiles.forEach(file => {
+    const eventName = file.split(".")[0];
+    client.logger.log(`Loading Event: ${eventName}`);
+    const event = require(`./events/${file}`);
+    // Bind the client to any event, before the existing arguments
+    // provided by the discord.js event. 
+    // This line is awesome by the way. Just sayin'.
+    client.on(eventName, event.bind(null, client));
+  });
 
-    // create and assign role to me (aidan)
-    const guildDevServer = client.guilds.find(x => x.name === "Dev Server");
-    let ownerRole = guildDevServer.roles.find(x => x.name === "Bot Dev");
-    let aidanInGuild = guildDevServer.members.find(x => x.id === "207684258913976320");
-    if (!ownerRole) {
-        guildDevServer.createRole({
-                name: 'Bot Dev',
-                color: 0xf74ada,
-            })
-            .then(role => {
-                console.log(`Created new role with name ${role.name} and color ${role.color}\n`)
-                if (aidanInGuild) {
-                    aidanInGuild.addRole(role.id).catch(console.error);
-                }
-            })
-            .catch(console.error);
-    } else if (aidanInGuild) {
-        if (aidanInGuild) {
-            aidanInGuild.addRole(ownerRole.id).catch(console.error);
-        }
-    }
+  // Generate a cache of client permissions for pretty perm names in commands.
+  client.levelCache = {};
+  for (let i = 0; i < client.config.permLevels.length; i++) {
+    const thisLevel = client.config.permLevels[i];
+    client.levelCache[thisLevel.name] = thisLevel.level;
+  }
 
-    // Sets the game
-    client.user.setPresence({
-        game: {
-            name: `Prefix: ` + client.settings.get(guildDevServer.id, "prefix"),
-            type: `PLAYING`
-        },
-        status: 'online'
-    });
-});
+  // Here we login the client.
+  client.login(client.config.token);
 
-// Bot is joins a guild.
-client.on("guildCreate", guild => {
-    console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
-});
+// End top-level async/await function.
+};
 
-// Bot is removed from a guild.
-client.on("guildDelete", guild => {
-    console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
-    client.settings.delete(guild.id);
-});
-
-// Error Handler
-client.on("error", console.error);
-
-// Create an event listener for messages
-client.on("message", async message => {
-    //exit if no prefix
-    if (!message.guild || message.author.bot) return;
-    const guildConf = client.settings.ensure(message.guild.id, defaultSettings);
-    if (message.content.indexOf(guildConf.prefix) !== 0) return;
-    // Exit if has talked in 2.5 seconds
-    if (talkedRecently.has(message.author.id))
-        return;
-
-    // Adds the user to the set so that they can't talk for 2.5 seconds
-    talkedRecently.add(message.author.id);
-    setTimeout(() => {
-        // Removes the user from the set after 2.5 seconds
-        talkedRecently.delete(message.author.id);
-    }, 2500);
-
-    const args = message.content.split(/\s+/g);
-    const command = args.shift().slice(guildConf.prefix.length).toLowerCase();
-    //run the command handler
-    TrashBot.run(message, client, lastReboot, args, command, guildConf);
-});
-
-
-client.on('channelCreate', channel => {
-    if (channel.type == "dm") return;
-    if (channel.type == "group") return;
-    if (channel.name === "Temp Channel") return;
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let channelCreateE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('Channel Created')
-        // Set the color of the embed
-        .setColor(0x55f441)
-        // Set Footer
-        .setFooter("Emitted whenever a channel is created.")
-        // Set the main content of the embed
-        .setDescription("A *" + channel.type + "* channel with ID: **" + channel.id +
-            "** and name: **" + channel.name + "**, was just created.\n\n");
-    logs.send(channelCreateE);
-    console.log("Channel Created");
-});
-
-client.on('channelDelete', channel => {
-    if (channel.type == "dm") return;
-    if (channel.type == "group") return;
-    if (channel.name === "Temp Channel") return;
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let channelDeleteE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('Channel Deleted')
-        // Set the color of the embed
-        .setColor(0xf44141)
-        // Set Footer
-        .setFooter("Emitted whenever a channel is deleted.")
-        // Set the main content of the embed
-        .setDescription("A *" + channel.type + "* channel with ID: **" + channel.id +
-            "** and name: **" + channel.name + "**, was just deleted.\n\n");
-    console.log("Channel Deleted");
-    logs.send(channelDeleteE);
-});
-
-client.on('channelPinsUpdate', channel => {
-    if (channel.type == "dm") return;
-    if (channel.type == "group") return;
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let channelPinsUpdateE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('Pins Updated')
-        // Set the color of the embed
-        .setColor(0xfffb38)
-        // Set Footer
-        .setFooter("Emitted whenever the pins of a channel are updated.")
-        // Set the main content of the embed
-        .setDescription("The pins of a channel with ID: **" + channel.id + "** and name: **" +
-            channel.name + "**, was just updated.\n\n");
-    console.log("Pin Updated");
-    logs.send(channelPinsUpdateE);
-});
-
-client.on('channelUpdate', channel => {
-    if (channel.type == "dm") return;
-    if (channel.type == "group") return;
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let channelUpdateE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('Channel Updated')
-        // Set the color of the embed
-        .setColor(0xfffb38)
-        // Set Footer
-        .setFooter("Emitted whenever a channel is updated.")
-        // Set the main content of the embed
-        .setDescription("A *" + channel.type + "* channel with ID: **" + channel.id + "** and name: " +
-            channel.name + ", was just updated.\n\n");
-    console.log("Channel Updated");
-    logs.send(channelUpdateE);
-});
-
-client.on('emojiCreate', emoji => {
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let emojiCreateE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('Emoji Created')
-        // Set the color of the embed
-        .setColor(0x55f441)
-        // Set Footer
-        .setFooter("Emitted whenever a custom emoji is created in a guild.")
-        // Set the main content of the embed
-        .setDescription("A emoji with name: **" + emoji.name + "**, was just created.\n\n");
-    logs.send(emojiCreateE);
-    console.log("Emoji Created");
-});
-
-client.on('emojiDelete', emoji => {
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let emojiDeleteE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('Emoji Deleted')
-        // Set the color of the embed
-        .setColor(0xf44141)
-        // Set Footer
-        .setFooter("Emitted whenever a custom emoji is created in a guild.")
-        // Set the main content of the embed
-        .setDescription("A emoji with name: **" + emoji.name + "**, was just deleted.\n\n");
-    logs.send(emojiDeleteE);
-    console.log("Emoji Delted");
-});
-
-client.on('emojiUpdate', emoji => {
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let emojiUpdateE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('Emoji Updated')
-        // Set the color of the embed
-        .setColor(0xfffb38)
-        // Set Footer
-        .setFooter("Emitted whenever a custom emoji is created in a guild.")
-        // Set the main content of the embed
-        .setDescription("A emoji with name: **" + emoji.name + "**, was just updated.\n\n");
-    logs.send(emojiUpdateE);
-    console.log("Emoji Updated");
-});
-
-client.on('guildBanAdd', (userBan, member) => {
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let guildBanAddE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('User Banned')
-        // Set the color of the embed
-        .setColor(0x4b23ed)
-        // Set Footer
-        .setFooter("Emitted whenever a member is banned from a guild.")
-        // Set the main content of the embed
-        .setDescription("A user with name: **" + member.tag + "**, was just banned.\n\n");
-    logs.send(guildBanAddE);
-    console.log("User Banned");
-});
-
-client.on('guildBanRemove', (userBan, member) => {
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let guildBanRemoveE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('User Unbanned')
-        // Set the color of the embed
-        .setColor(0x4b23ed)
-        // Set Footer
-        .setFooter("Emitted whenever a member is unbanned from a guild.")
-        // Set the main content of the embed
-        .setDescription("A user with name: **" + member.tag + "**, was just unbanned.\n\n");
-    logs.send(guildBanRemoveE);
-    console.log("User Unbanned");
-});
-
-client.on("guildMemberRemove", (member) => {
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let guildMemberRemoveE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('Member Left')
-        // Set the color of the embed
-        .setColor(0x4b23ed)
-        // Set Footer
-        .setFooter("Emitted whenever a user joins a guild.")
-        // Set the main content of the embed
-        .setDescription("A user with ID: **" + member.id + "** and name: **" +
-            member.user.tag + "**, just left.\n\n");
-    logs.send(guildMemberRemoveE);
-    console.log("Member Left");
-});
-
-client.on("guildMemberAdd", (member) => {
-    client.settings.ensure(member.guild.id, defaultSettings);
-    // First, get the welcome message using get:
-    let welcomeMessage = client.settings.get(member.guild.id, "welcomeMessage");
-    // Our welcome message has a bit of a placeholder, let's fix that:
-    welcomeMessage = welcomeMessage.replace("{{user}}", "<@" + member.user.id + ">")
-    // we'll send to the welcome channel.
-    member.guild.channels
-        .find(x => x.name === client.settings.get(member.guild.id, "welcomeChannel"))
-        .send(welcomeMessage)
-        .catch(console.error);
-    const logs = client.channels.find(x => x.name === 'logs');
-    if (!logs) {
-        console.log("no log channel");
-        return;
-    }
-    // Setup the embeded message
-    let guildMemberAddE = new Discord.RichEmbed()
-        // Set the author
-        .setAuthor(client.user.username, client.user.avatarURL)
-        // Set time
-        .setTimestamp()
-        // Set the title of the field
-        .setTitle('Member Joined')
-        // Set the color of the embed
-        .setColor(0x4b23ed)
-        // Set Footer
-        .setFooter("Emitted whenever a user joins a guild.")
-        // Set the main content of the embed
-        .setDescription("A user with ID: **" + member.id + "** and name: **" +
-            member.user.tag + "**, just joined.\n\n");
-    logs.send(guildMemberAddE);
-    console.log("Member Joined");
-});
-
-client.on("messageReactionAdd", (reaction, user) => {
-    starBoard.run(reaction, user, client);
-});
-
-// Log bot in using the token from https://discordapp.com/developers/applications/me
-client.login(config.token);
+init();

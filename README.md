@@ -1,64 +1,23 @@
-# Trash-Bot
-Discord bot used in the -TRASH- discord.
+## Requirements
 
-## Commands:
+- `git` command line ([Windows](https://git-scm.com/download/win)|[Linux](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)|[MacOS](https://git-scm.com/download/mac)) installed
+- `node` [Version 8.0.0 or higher](https://nodejs.org)
+- The node-gyp build tools. This is a pre-requisite for Enmap, but also for a **lot** of other modules. See [The Enmap Guide](https://enmap.evie.codes/install#pre-requisites) for details and requirements for your OS. Just follow what's in the tabbed block only, then come back here!
 
-#### Admin
-Mod/Admin Only:
-  a panel for all admin commands
+You also need your bot's token. This is obtained by creating an application in
+the Developer section of discordapp.com
 
-#### Audit
-Admin Only:
-  kinda broken atm
+Once finished:
 
-#### Eval
-Bot Owner Only:
-  evals input
+- In the folder from where you ran the git command, run `cd Trash-Bot` and then run `npm install`
+- **If you get any error about python or msibuild.exe or binding, read the requirements section again!**
+- Edit `config.js` and fill in all the relevant details as indicated in the file's comments.
 
-#### Gay
-Everyone:
-  responds with "no u"
+## Starting the bot
 
-#### Google
-Everyone:
-  google no longer supports scraping.
+To start the bot, in the command prompt, run the following command:
+`node index.js`
 
-#### KickVoice
-Mod/Admin Only:
-  creates channel, moves mentioned user to channel, deletes channel; kicks user from voice channel.
+## Inviting to a guild
 
-#### LastReboot
-Everyone:
-  responds with last reboot of bot
-  
-#### Ping
-Everyone:
-  responds with ping of bot
-
-#### Prefix
-Mod/Admin Only:
-  changes prefix of bot
-
-#### Purge
-Mod/Admin Only:
-  purges specified amount of messages from mentioned user (if one)
-  
-#### Say
-Everyone:
-  repeats what you say
-  
-#### Scramble
-Mod/Admin:
-  scrambles nickname of mentioned user
-
-#### SetConf
-Mod/Admin:
-  sets config
-
-#### ShowConf
-Mod/Admin:
-  shows current config
-  
-#### SetPresence
-Bot Owner Only:
-  sets presence of bot
+To add the bot to your guild, you have to get an oauth link for it.
