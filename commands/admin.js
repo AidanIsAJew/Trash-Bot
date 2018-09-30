@@ -18,9 +18,11 @@ const commandKickVoice = require("../commands/kickvoice.js");
 const commandScramble = require("../commands/scramble.js");
 const commandLastReboot = require("../commands/lastReboot.js");
 const commandAdmin = require("../commands/admin.js");
+const commandSetConf = require("../commands/setconf.js");
+const commandShowConf = require("../commands/showconf.js");
 
 module.exports = {
-    run: async (message, command, args, client, lastReboot) => {
+    run: async (message, command, args, client, lastReboot, guildConf) => {
         let author = message.author;
         let adminPannel = new Discord.RichEmbed()
             // Set the author
@@ -43,8 +45,8 @@ module.exports = {
                 "**3) kickvoice**\n\n" +
                 "**4) scramble**\n\n" +
                 "**5) last reboot**\n\n" +
-                "**6)**\n\n" +
-                "**7)**\n\n" +
+                "**6) show config**\n\n" +
+                "**7) set config**\n\n" +
                 "**8)**\n\n" +
                 "**9)**\n\n" +
                 "*10) Next page*\n\n");
@@ -128,6 +130,25 @@ module.exports = {
                                 if (collected.first().content === "5") {
                                     commandLastReboot.run(message, command, args, lastReboot);
                                 }
+                                if (collected.first().content === "6") {
+                                    commandShowConf.run(message, command, args, client, guildConf);
+                                }
+                                if (collected.first().content === "7") {
+                                    message.channel.send(`Please enter the arguments now.`);
+                                    message.channel.awaitMessages(response => response.author === author, {
+                                            max: 1,
+                                            time: 30000,
+                                            errors: ['time'],
+                                        })
+                                        .then((collected) => {
+                                            message.channel.send(`The collected message was: \`${collected.first().content}\``);
+                                            let testMessage = collected.first();
+                                            commandSetConf.run(message, command, args, client, testMessage);
+                                        })
+                                        .catch(() => {
+                                            message.channel.send('There was no collected message that passed the filter within the time limit!');
+                                        });
+                                }
                                 if (collected.first().content === "10") {
                                     let adminPannel = new Discord.RichEmbed()
                                         // Set the author
@@ -168,22 +189,22 @@ module.exports = {
                                                 .then((collected) => {
                                                     message.channel.send(`The collected message was: \`${collected.first().content}\`\n`)
                                                         .then(() => {
-                                                          if (collected.first().content === "11") {
-                                                              message.channel.send(`Please enter the arguments now.`);
-                                                              message.channel.awaitMessages(response => response.author === author, {
-                                                                      max: 1,
-                                                                      time: 30000,
-                                                                      errors: ['time'],
-                                                                  })
-                                                                  .then((collected) => {
-                                                                      message.channel.send(`The collected message was: \`${collected.first().content}\``);
-                                                                      let testMessage = collected.first();
-                                                                      //commandPrefix.run(message, command, args, client, testMessage);
-                                                                  })
-                                                                  .catch(() => {
-                                                                      message.channel.send('There was no collected message that passed the filter within the time limit!');
-                                                                  });
-                                                          }
+                                                            if (collected.first().content === "11") {
+                                                                message.channel.send(`Please enter the arguments now.`);
+                                                                message.channel.awaitMessages(response => response.author === author, {
+                                                                        max: 1,
+                                                                        time: 30000,
+                                                                        errors: ['time'],
+                                                                    })
+                                                                    .then((collected) => {
+                                                                        message.channel.send(`The collected message was: \`${collected.first().content}\``);
+                                                                        let testMessage = collected.first();
+                                                                        //commandPrefix.run(message, command, args, client, testMessage);
+                                                                    })
+                                                                    .catch(() => {
+                                                                        message.channel.send('There was no collected message that passed the filter within the time limit!');
+                                                                    });
+                                                            }
                                                         });
                                                 })
                                                 .catch(() => {

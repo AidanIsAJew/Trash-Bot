@@ -69,7 +69,13 @@ client.on("ready", () => {
     }
 
     // Sets the game
-    client.user.setActivity(`Prefix: ` + client.settings.get(guildDevServer.id, "prefix"));
+    client.user.setPresence({
+        game: {
+            name: `Prefix: ` + client.settings.get(guildDevServer.id, "prefix"),
+            type: `PLAYING`
+        },
+        status: 'online'
+    });
 });
 
 // Bot is joins a guild.
@@ -374,10 +380,10 @@ client.on("guildMemberAdd", (member) => {
     // First, get the welcome message using get:
     let welcomeMessage = client.settings.get(member.guild.id, "welcomeMessage");
     // Our welcome message has a bit of a placeholder, let's fix that:
-    welcomeMessage = welcomeMessage.replace("{{user}}", member.user.tag)
+    welcomeMessage = welcomeMessage.replace("{{user}}", "<@" + member.user.id + ">")
     // we'll send to the welcome channel.
     member.guild.channels
-        .find("name", client.settings.get(member.guild.id, "welcomeChannel"))
+        .find(x => x.name === client.settings.get(member.guild.id, "welcomeChannel"))
         .send(welcomeMessage)
         .catch(console.error);
     const logs = client.channels.find(x => x.name === 'logs');

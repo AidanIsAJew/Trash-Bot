@@ -10,6 +10,13 @@ module.exports = {
         if (testMessage) {
             let args = testMessage.content.split(/\s+/g);
             const [prop, ...value] = args;
+            if (!prop || !value) {
+                message.reply(`Dude. Please. I've had to restore my data base like 4 times from retards like you` +
+                    ` not entering args into this command.` +
+                    ` I will fucking kill you, ${message.author}. Mark my words.`);
+                return;
+            }
+            console.log(args);
 
             // Example:
             // prop: "prefix"
@@ -36,10 +43,10 @@ module.exports = {
         if (testMessage === undefined) {
             const [prop, ...value] = args;
             if (!prop || !value) {
-              message.reply(`Dude. Please. I've had to restore my data base like 4 times from retards like you` +
-              ` not entering args into this command.` +
-              ` I will fucking kill you, ${message.author}. Mark my words.`);
-              return;
+                message.reply(`Dude. Please. I've had to restore my data base like 4 times from retards like you` +
+                    ` not entering args into this command.` +
+                    ` I will fucking kill you, ${message.author}. Mark my words.`);
+                return;
             }
             console.log(args);
             // Example:

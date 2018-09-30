@@ -17,6 +17,8 @@ const commandScramble = require("../commands/scramble.js");
 const commandLastReboot = require("../commands/lastReboot.js");
 const commandAdmin = require("../commands/admin.js");
 const commandSetConf = require("../commands/setconf.js");
+const commandShowConf = require("../commands/showconf.js");
+const commandSetPresence = require("../commands/setpresence.js");
 
 module.exports = {
     run: async (message, client, lastReboot, args, command, guildConf) => {
@@ -61,10 +63,15 @@ module.exports = {
             commandLastReboot.run(message, command, args, lastReboot);
         }
 
+        // If the message is "setpresence"
+        if (command === "setpresence") {
+            commandSetPresence.run(message, command, args, client);
+        }
+
         // IF the message is "admin"
         if (command === "admin") {
             if (message.member.roles.some(r => [mod, admin].includes(r.name))) {
-                commandAdmin.run(message, command, args, client, lastReboot);
+                commandAdmin.run(message, command, args, client, lastReboot, guildConf);
             } else {
                 message.reply("You lack the required permissions/roles");
             }
@@ -118,17 +125,11 @@ module.exports = {
 
         if (command === "showconf") {
             if (message.member.roles.some(r => [mod, admin].includes(r.name))) {
-                const [prop, ...value] = args;
-                let configProps = Object.keys(guildConf).map(prop => {
-                    return `${prop}  :  ${guildConf[prop]}\n`;
-                });
-                message.channel.send(`The following are the server's current configuration:\`\`\`${configProps}\`\`\``);
-
+                commandShowConf.run(message, command, args, client, guildConf);
             } else {
                 message.reply("You lack the required permissions/roles");
             }
         }
-
 
         // If the message is "audit"
         if (command === "audit") {
