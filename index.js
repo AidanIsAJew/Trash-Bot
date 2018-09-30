@@ -30,6 +30,8 @@ client.settings = new Enmap({
     autoFetch: true,
     cloneLevel: 'deep'
 });
+
+client.warning = new Enmap({name: "warning"});
 // Just setting up a default configuration object here, to have something to insert.
 const defaultSettings = {
     prefix: "!",

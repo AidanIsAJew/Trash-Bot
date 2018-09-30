@@ -20,6 +20,9 @@ const commandLastReboot = require("../commands/lastReboot.js");
 const commandAdmin = require("../commands/admin.js");
 const commandSetConf = require("../commands/setconf.js");
 const commandShowConf = require("../commands/showconf.js");
+const commandSetPresence = require("../commands/setpresence.js");
+const commandKick = require("../commands/kick.js");
+const commandBan = require("../commands/ban.js");
 
 module.exports = {
     run: async (message, command, args, client, lastReboot, guildConf) => {
@@ -47,8 +50,8 @@ module.exports = {
                 "**5) last reboot**\n\n" +
                 "**6) show config**\n\n" +
                 "**7) set config**\n\n" +
-                "**8)**\n\n" +
-                "**9)**\n\n" +
+                "**8) ban**\n\n" +
+                "**9) kick**\n\n" +
                 "*10) Next page*\n\n");
 
         // commands
@@ -144,6 +147,38 @@ module.exports = {
                                             message.channel.send(`The collected message was: \`${collected.first().content}\``);
                                             let testMessage = collected.first();
                                             commandSetConf.run(message, command, args, client, testMessage);
+                                        })
+                                        .catch(() => {
+                                            message.channel.send('There was no collected message that passed the filter within the time limit!');
+                                        });
+                                }
+                                if (collected.first().content === "8") {
+                                    message.channel.send(`Please enter the arguments now.`);
+                                    message.channel.awaitMessages(response => response.author === author, {
+                                            max: 1,
+                                            time: 30000,
+                                            errors: ['time'],
+                                        })
+                                        .then((collected) => {
+                                            message.channel.send(`The collected message was: \`${collected.first().content}\``);
+                                            let testMessage = collected.first();
+                                            commandBan.run(message, command, args, client, testMessage);
+                                        })
+                                        .catch(() => {
+                                            message.channel.send('There was no collected message that passed the filter within the time limit!');
+                                        });
+                                }
+                                if (collected.first().content === "9") {
+                                    message.channel.send(`Please enter the arguments now.`);
+                                    message.channel.awaitMessages(response => response.author === author, {
+                                            max: 1,
+                                            time: 30000,
+                                            errors: ['time'],
+                                        })
+                                        .then((collected) => {
+                                            message.channel.send(`The collected message was: \`${collected.first().content}\``);
+                                            let testMessage = collected.first();
+                                            commandKick.run(message, command, args, client, testMessage);
                                         })
                                         .catch(() => {
                                             message.channel.send('There was no collected message that passed the filter within the time limit!');
