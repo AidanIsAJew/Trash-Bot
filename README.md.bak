@@ -5,7 +5,7 @@ Discord bot used in the -TRASH- discord.
 
 #### Admin
 Mod/Admin Only:
-  a panel for all admin commands
+  a pannel for all admin commands
 
 #### Audit
 Admin Only:
@@ -41,11 +41,11 @@ Mod/Admin Only:
 
 #### Purge
 Mod/Admin Only:
-  purges specified amount of messages from mentioned user (if one)
+  purges specifed amount of messages from mentioned user (if one)
   
 #### Say
 Everyone:
-  repeats what you say
+  repeates what you say
   
 #### Scramble
 Mod/Admin:
