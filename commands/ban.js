@@ -1,8 +1,8 @@
 exports.run = async (client, message, args, level) => {
     let member = message.mentions.members.first();
-    if (member.id = message.author.id) return message.reply("You can not ban yourself");
     if (!member)
         return message.reply("Please mention a valid member of this server");
+    if (member.user.id === message.author.id) return message.reply("You can not ban yourself");
     if (!member.bannable)
         return message.reply("I cannot ban this user! Do they have a higher role? Do I have ban permissions?");
     let reason = args.slice(1).join(' ');
@@ -22,6 +22,6 @@ exports.conf = {
 exports.help = {
     name: "ban",
     category: "Moderation",
-    description: "bans user with reason",
+    description: "Bans user with reason.",
     usage: "ban [mention] [reason]"
 };
