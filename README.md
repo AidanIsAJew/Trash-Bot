@@ -11,6 +11,7 @@ Once finished:
 
 - In the folder from where you ran the git command, run `cd Trash-Bot` and then run `npm install`
 - **If you get any error about python or msibuild.exe or binding, read the requirements section again!**
+- Change `example-config.js` to `config.js`
 - Edit `config.js` and fill in all the relevant details as indicated in the file's comments.
 
 ## Starting the bot
