@@ -1,5 +1,6 @@
 exports.run = async (client, message, args, level) => {
     let member = message.mentions.members.first();
+    if (member.id = message.author.id) return message.reply("You can not ban yourself");
     if (!member)
         return message.reply("Please mention a valid member of this server");
     if (!member.bannable)
