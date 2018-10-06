@@ -17,6 +17,6 @@ exports.conf = {
 exports.help = {
     name: "say",
     category: "Fun",
-    description: "replys with entered message",
+    description: "Replys with entered message.",
     usage: "say [message]"
 };
