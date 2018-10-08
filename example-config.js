@@ -6,11 +6,16 @@ const config = {
   "admins": ["10111THIS11IS100ALSO1100111A1010TOKEN"],
 
   // Bot Support, level 8 by default. Array of user ID strings
-  "support": [],
+  "support": ["10111THIS11IS100ALSO1100111A1010TOKEN"],
 
   // Your Bot's Token. Available on https://discordapp.com/developers/applications/me
   "token": "arepTHISivlIS.kmAbit.aBOTdQ_fTOKEN-vn1t",
 
+  // Bot's support guild id
+  "botGuildID": "10111THIS11IS100ALSO1100111A1010TOKEN",
+
+  // Bot's bug-report channel id
+  "botChannelID": "10111THIS11IS100ALSO1100111A1010TOKEN",
   // Default per-server settings. New guilds have these settings.
 
   // DO NOT LEAVE ANY OF THESE BLANK, AS YOU WILL NOT BE ABLE TO UPDATE THEM
