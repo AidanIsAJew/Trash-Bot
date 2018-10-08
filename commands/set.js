@@ -84,7 +84,9 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         Object.entries(settings).forEach(([key, value]) => {
             array.push(`${key}${" ".repeat(20 - key.length)}::  ${value}`);
         });
-        await message.channel.send(`= Current Guild Settings =\n${array.join("\n")}`, {
+        const mesg = array.join("\n");//.replace(/\*/gi, "\\*");
+        //console.log(mesg);
+        await message.channel.send(`= Current Guild Settings =\n${mesg}`, {
             code: "asciidoc"
         });
     }

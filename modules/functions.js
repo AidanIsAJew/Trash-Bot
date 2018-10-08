@@ -67,6 +67,13 @@ module.exports = (client) => {
     }
   };
 
+  client.resolveAfter5Minutes = async () => {
+      return new Promise(resolve => {
+          setTimeout(() => {
+              resolve('resolved');
+          }, 5 * 1000 * 60);
+      });
+  }
 
   /*
   MESSAGE CLEAN FUNCTION
@@ -115,7 +122,7 @@ module.exports = (client) => {
       command = client.commands.get(client.aliases.get(commandName));
     }
     if (!command) return `The command \`${commandName}\` doesn"t seem to exist, nor is it an alias. Try again!`;
-  
+
     if (command.shutdown) {
       await command.shutdown(client);
     }
@@ -131,13 +138,13 @@ module.exports = (client) => {
   };
 
   /* MISCELANEOUS NON-CRITICAL FUNCTIONS */
-  
+
   // EXTENDING NATIVE TYPES IS BAD PRACTICE. Why? Because if JavaScript adds this
   // later, this conflicts with native code. Also, if some other lib you use does
   // this, a conflict also occurs. KNOWING THIS however, the following 2 methods
-  // are, we feel, very useful in code. 
-  
-  // <String>.toPropercase() returns a proper-cased string such as: 
+  // are, we feel, very useful in code.
+
+  // <String>.toPropercase() returns a proper-cased string such as:
   // "Mary had a little lamb".toProperCase() returns "Mary Had A Little Lamb"
   Object.defineProperty(String.prototype, "toProperCase", {
     value: function() {
@@ -160,7 +167,7 @@ module.exports = (client) => {
   process.on("uncaughtException", (err) => {
     const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
     client.logger.error(`Uncaught Exception: ${errorMsg}`);
-    // Always best practice to let the code crash on uncaught exceptions. 
+    // Always best practice to let the code crash on uncaught exceptions.
     // Because you should be catching them anyway.
     process.exit(1);
   });

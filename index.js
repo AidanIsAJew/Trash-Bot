@@ -31,6 +31,7 @@ require("./modules/functions.js")(client);
 // catalogued, listed, etc.
 client.commands = new Enmap();
 client.aliases = new Enmap();
+client.warns = new Enmap();
 
 // Now we integrate the use of Evie's awesome Enhanced Map module, which
 // essentially saves a collection to disk. This is great for per-server configs,
@@ -60,7 +61,7 @@ const init = async () => {
     client.logger.log(`Loading Event: ${eventName}`);
     const event = require(`./events/${file}`);
     // Bind the client to any event, before the existing arguments
-    // provided by the discord.js event. 
+    // provided by the discord.js event.
     // This line is awesome by the way. Just sayin'.
     client.on(eventName, event.bind(null, client));
   });
