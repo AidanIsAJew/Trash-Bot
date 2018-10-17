@@ -43,10 +43,10 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 • Next    :: Kick`, {
                 code: "asciidoc"
             });
-            const role = message.guild.roles.find(x => x.name === "gagged");
+            const role = message.guild.roles.find(x => x.name === "GARBAGE-gagged");
             if (!role) {
                 await message.guild.createRole({
-                    name: 'gagged'
+                    name: 'GARBAGE-gagged'
                 });
             }
             const chan = message.guild.channels.find(x => x.type === "text");

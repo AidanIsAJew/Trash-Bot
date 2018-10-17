@@ -27,7 +27,7 @@ client.logger = require("./modules/Logger");
 // the bot, like logs and elevation features.
 require("./modules/functions.js")(client);
 
-// Aliases and commands are put in collections where they can be read from,
+// Aliases, commands and warns are put in collections where they can be read from,
 // catalogued, listed, etc.
 client.commands = new Enmap();
 client.aliases = new Enmap();

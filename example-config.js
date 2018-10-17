@@ -30,6 +30,9 @@ const config = {
     "welcomeChannel": "general",
     "welcomeMessage": "Hey! {{user}}, make sure to say hello!",
     "welcomeEnabled": "true",
+    "goodbyeChannel": "general",
+    "goodbyeMessage": "{{user}} just left {{server}}. Thats fine...Didn't want you here anyways, {{user}}...",
+    "goodbyeEnabled": "true",
     "starboardChannel": "star-board"
   },
 

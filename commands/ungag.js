@@ -3,10 +3,10 @@ exports.run = async (client, message, args, level) => {
     const user = message.mentions.members.first() || message.guild.members.get(args[0]);
     if (!user) return message.reply("Please mention a valid member of this server");
     if (user.user.id === message.author.id) return message.reply("You can not gag yourself");
-    const role = message.guild.roles.find(x => x.name === "gagged");
+    const role = message.guild.roles.find(x => x.name === "GARBAGE-gagged");
     if (!role) {
         await message.guild.createRole({
-            name: 'gagged'
+            name: 'GARBAGE-gagged'
         });
     }
     user.removeRole(role);
