@@ -1,7 +1,7 @@
 {
-  "name": "guidebot",
-  "version": "2.3.5",
-  "description": "A boilerplate example bot with command handler and reloadable commands. Updated and Maintained by the Idiot's Guide Community",
+  "name": "trash-bot",
+  "version": "2.0.1",
+  "description": "The discord bot used in the TRASH discord server.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
