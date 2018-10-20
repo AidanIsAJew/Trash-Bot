@@ -30,6 +30,9 @@
     "enmap": "^4.2.1",
     "moment": "^2.20.1",
     "moment-duration-format": "^2.2.0",
-    "request": "^2.88.0"
+    "npm": "^6.4.1",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "tinyurl": "^1.1.2"
   }
 }
