@@ -33,7 +33,8 @@ const config = {
     "goodbyeChannel": "general",
     "goodbyeMessage": "{{user}} just left {{server}}. Thats fine...Didn't want you here anyways, {{user}}...",
     "goodbyeEnabled": "true",
-    "starboardChannel": "star-board"
+    "starboardChannel": "star-board",
+    "newsAPI": "bf2b835694991c17ab402211d7f543cc" // API key got from https://newsapi.org **THIS IS NOT A REAL KEY PLEASE GET ANOTHER**
   },
 
   // PERMISSION LEVEL DEFINITIONS.
