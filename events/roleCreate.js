@@ -21,7 +21,7 @@ module.exports = async (client, role) => {
       let user = "";
       let desc = "";
       let id = "";
-      console.log(entry);
+      //console.log(entry);
       if (entry.executor.username) {
           user = entry.executor.username;
           desc = entry.executor.discriminator;

@@ -17,7 +17,7 @@ module.exports = async (client, role) => {
       const entry = await role.guild.fetchAuditLogs({
           type: 'ROLE_DELETE'
       }).then(audit => audit.entries.first());
-      console.log(entry);
+      //console.log(entry);
       let user = "";
       let desc = "";
       let id = "";
