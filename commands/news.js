@@ -3,7 +3,7 @@ const TinyURL = require('tinyurl');
 
 exports.run = async (client, message, args, level) => {
 
-    request(`https://newsapi.org/v2/top-headlines?country=us&apiKey=4cc96a35bb11407f9fc372295b12d841`, function(error, response, body) {
+    request(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${client.config.newsAPI}`, function(error, response, body) {
         //client.logger.log('error:' + error); // Print the error if one occurred
         //client.logger.log('statusCode:' + response.statusCode); // Print the response status code if a response was received
         //console.log('body:', JSON.parse(body)/*body*/); // Print the JSON for the API request.
