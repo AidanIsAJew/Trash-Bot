@@ -18,7 +18,7 @@ const config = {
   "botChannelID": "10111THIS11IS100ALSO1100111A1010TOKEN",
 
   // News API key got from https://newsapi.org
-  "newsAPI": "4cc96a35bb11407f9fc372295b12d841",
+  "newsAPI": "GETYOUROWNKEY5432432432",
 
   // Default per-server settings. New guilds have these settings.
 
