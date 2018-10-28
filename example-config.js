@@ -16,25 +16,29 @@ const config = {
 
   // Bot's bug-report channel id
   "botChannelID": "10111THIS11IS100ALSO1100111A1010TOKEN",
+
+  // News API key got from https://newsapi.org
+  "newsAPI": "4cc96a35bb11407f9fc372295b12d841",
+
   // Default per-server settings. New guilds have these settings.
 
   // DO NOT LEAVE ANY OF THESE BLANK, AS YOU WILL NOT BE ABLE TO UPDATE THEM
   // VIA COMMANDS IN THE GUILD.
 
-  "defaultSettings" : {
-    "prefix": "!",
-    "modLogChannel": "log",
-    "modRole": "Moderator",
-    "adminRole": "Admin",
-    "systemNotice": "true", // This gives a notice when a user tries to run a command that they do not have permission to use.
-    "welcomeChannel": "general",
-    "welcomeMessage": "Hey! {{user}}, make sure to say hello!",
-    "welcomeEnabled": "true",
-    "goodbyeChannel": "general",
-    "goodbyeMessage": "{{user}} just left {{server}}. Thats fine...Didn't want you here anyways, {{user}}...",
-    "goodbyeEnabled": "true",
-    "starboardChannel": "star-board",
-    "newsAPI": "bf2b835694991c17ab402211d7f543cc" // API key got from https://newsapi.org **THIS IS NOT A REAL KEY PLEASE GET ANOTHER**
+  "defaultSettings": {
+      "prefix": "!",
+      "modLogEnabled": "false",
+      "modLogChannel": "logs",
+      "modRole": "Moderator",
+      "adminRole": "Admin",
+      "systemNotice": "true", // This gives a notice when a user tries to run a command that they do not have permission to use.
+      "welcomeChannel": "general",
+      "welcomeMessage": "Hey! {{user}}, make sure to say hello!",
+      "welcomeEnabled": "true",
+      "goodbyeChannel": "general",
+      "goodbyeMessage": "{{user}} just left {{server}}. Thats fine...Didn't want you here anyways, {{user}}...",
+      "goodbyeEnabled": "true",
+      "starboardChannel": "star-board"
   },
 
   // PERMISSION LEVEL DEFINITIONS.
