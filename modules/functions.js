@@ -77,7 +77,7 @@ module.exports = (client) => {
                 resolve('resolved');
             }, 5 * 1000 * 60);
         });
-    }
+    };
 
     /*
     MESSAGE CLEAN FUNCTION
