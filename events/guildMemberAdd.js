@@ -4,10 +4,6 @@ module.exports = (client, member) => {
   // Load the guild's settings
   const settings = client.getSettings(member.guild.id);
 
-  if (settings.reactRole == "true") {
-    member.send(`Hey ${member.user.username}, make sure to read the rules and react to the message to gain access. If you don't, you're not entering.`);
-  }
-
   // If welcome is off, don't proceed (don't welcome the user)
   if (settings.welcomeEnabled !== "true") return;
 
