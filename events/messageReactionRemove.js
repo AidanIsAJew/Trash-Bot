@@ -3,7 +3,13 @@
 const Discord = require("discord.js");
 module.exports = async (client, reaction, user) => {
     const message = reaction.message;
-    const settings = message.settings;
+    var settings = message.settings;
+    if (!settings) {
+        settings = await client.settings.get(reaction.message.guild.id);
+        if (!(settings["starboardChannel"])) {
+            client.settings.set(reaction.message.guild.id, client.config.defaultSettings.starboardChannel, "starboardChannel")
+        }
+    }
 
     if (reaction.emoji.name !== '⭐') return;
     const starboardChannel = settings["starboardChannel"];
@@ -18,7 +24,7 @@ module.exports = async (client, reaction, user) => {
         const star = /^\⭐\s([0-9]{1,3})\s\|\s([0-9]{17,20})/.exec(stars.embeds[0].footer.text);
         const foundStar = stars.embeds[0];
         const image = message.attachments.size > 0 ? message.attachments.array()[0].url : '';
-        const amt = parseInt(star[1])-1;
+        const amt = parseInt(star[1]) - 1;
         const embed = new Discord.RichEmbed()
             .setColor(foundStar.color)
             .setDescription(foundStar.description)
