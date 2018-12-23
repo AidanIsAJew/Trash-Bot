@@ -38,7 +38,10 @@ const config = {
       "goodbyeChannel": "general",
       "goodbyeMessage": "{{user}} just left {{server}}. Thats fine...Didn't want you here anyways, {{user}}...",
       "goodbyeEnabled": "true",
-      "starboardChannel": "star-board"
+      "starboardChannel": "star-board",
+      "reactToJoin": "false",
+      "reactRole": "member",
+      "rulesChannel": "welcome"
   },
 
   // PERMISSION LEVEL DEFINITIONS.
