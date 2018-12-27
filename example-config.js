@@ -41,7 +41,9 @@ const config = {
       "starboardChannel": "star-board",
       "reactToJoin": "false",
       "reactRole": "member",
-      "rulesChannel": "welcome"
+      "rulesChannel": "welcome",
+	    "intoduceEnabled": "false",
+	    "introduceChannel": "introduce yourself" 
   },
 
   // PERMISSION LEVEL DEFINITIONS.
