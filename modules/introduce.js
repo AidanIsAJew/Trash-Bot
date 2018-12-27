@@ -15,13 +15,6 @@ module.exports = {
             SEND_MESSAGES: false,
             ATTACH_FILES: false
         });
-        if (settings.reactToJoin == "true") {
-          const memberRole = message.guild.roles.find(x => x.name === settings.reactRole);
-          channel.overwritePermissions(memberRole, { //first you pass the id OR the member OR the user OR a role
-              SEND_MESSAGES: false,
-              ATTACH_FILES: false
-          });
-        }
       }
       message.member.addRole(role);
     }
