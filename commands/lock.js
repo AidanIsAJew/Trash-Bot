@@ -1,5 +1,5 @@
 exports.run = async (client, message, args, level) => {
-    const role;
+    let role;
     const settings = client.getSettings(message.guild.id);
     if (settings.reactToJoin == "true") {
       role = message.guild.roles.find(x => x.name == "member");
